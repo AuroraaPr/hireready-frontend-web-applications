@@ -18,8 +18,16 @@ export class QuestionBankService {
     return this.http.post<QuestionBankResponseDTO>(this.ruta_servidor + '/companies/me/' + this.recurso, dto);
   }
 
-  listForApplicant() {
-    return this.http.get<QuestionBankSummaryResponseDTO[]>(this.ruta_servidor + '/applicants/me/' + this.recurso);
+  listForApplicant(filter: string) {
+    return this.http.get<QuestionBankSummaryResponseDTO[]>(this.ruta_servidor + '/applicants/me/' + this.recurso, { params: { filter } });
+  }
+
+  listForCompany() {
+    return this.http.get<QuestionBankSummaryResponseDTO[]>(this.ruta_servidor + '/companies/me/' + this.recurso);
+  }
+
+  getByIdForCompany(bankId: number) {
+    return this.http.get<QuestionBankResponseDTO>(this.ruta_servidor + '/companies/me/' + this.recurso + '/' + bankId);
   }
 
   // para admin
