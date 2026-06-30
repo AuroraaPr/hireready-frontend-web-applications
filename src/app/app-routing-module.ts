@@ -17,7 +17,6 @@ import { DashboardAdmin } from './components/admin/dashboard-admin/dashboard-adm
 import { ListApplicants } from './components/admin/list-applicants/list-applicants';
 import { ListCompanies } from './components/admin/list-companies/list-companies';
 import { ListBanksAdmin } from './components/admin/list-banks-admin/list-banks-admin';
-import { DetailBankAdmin } from './components/admin/detail-bank-admin/detail-bank-admin';
 import { ListCareers } from './components/admin/list-careers/list-careers';
 import { applicantGuard } from './guards/applicant-guard';
 import { companyGuard } from './guards/company-guard';
@@ -49,7 +48,6 @@ const routes: Routes = [
   { path: 'admin/applicants', component: ListApplicants, canActivate: [adminGuard] },
   { path: 'admin/companies', component: ListCompanies, canActivate: [adminGuard] },
   { path: 'admin/banks', component: ListBanksAdmin, canActivate: [adminGuard] },
-  { path: 'admin/banks/:id', component: DetailBankAdmin, canActivate: [adminGuard] },
   { path: 'admin/careers', component: ListCareers, canActivate: [adminGuard] },
 
   { path: '**', redirectTo: 'login' },

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DetailBankAdmin } from './detail-bank-admin';
+import { DetailBank } from './detail-bank';
 
-describe('DetailBankAdmin', () => {
-  let component: DetailBankAdmin;
-  let fixture: ComponentFixture<DetailBankAdmin>;
+describe('DetailBank', () => {
+  let component: DetailBank;
+  let fixture: ComponentFixture<DetailBank>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DetailBankAdmin],
+      declarations: [DetailBank],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DetailBankAdmin);
+    fixture = TestBed.createComponent(DetailBank);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

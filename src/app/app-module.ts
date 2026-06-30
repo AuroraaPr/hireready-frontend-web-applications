@@ -26,13 +26,13 @@ import { DashboardAdmin } from './components/admin/dashboard-admin/dashboard-adm
 import { ListApplicants } from './components/admin/list-applicants/list-applicants';
 import { ListCompanies } from './components/admin/list-companies/list-companies';
 import { ListBanksAdmin } from './components/admin/list-banks-admin/list-banks-admin';
-import { DetailBankAdmin } from './components/admin/detail-bank-admin/detail-bank-admin';
 import { ListCareers } from './components/admin/list-careers/list-careers';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './modules/material/material-module';
 import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor';
+import { DetailBank } from './components/shared/detail-bank/detail-bank';
 
 @NgModule({
   declarations: [
@@ -60,8 +60,8 @@ import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor
     ListApplicants,
     ListCompanies,
     ListBanksAdmin,
-    DetailBankAdmin,
     ListCareers,
+    DetailBank,
   ],
   imports: [
     BrowserModule,
@@ -74,9 +74,7 @@ import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptors([
-      autorizacionInterceptor
-    ])),
+    provideHttpClient(withInterceptors([autorizacionInterceptor])),
   ],
   bootstrap: [App],
 })
