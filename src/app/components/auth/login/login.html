@@ -1,0 +1,65 @@
+<div class="auth-page">
+
+  <div class="bg-image"></div>
+
+  <div class="auth-card">
+
+    <!-- bienvenida -->
+    <div class="auth-side">
+      <div class="brand">
+        <svg class="brand-logo" width="44" height="44" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="43" height="42.4189" rx="21.2095" fill="#FFFFFF"/>
+          <path d="M21.5 6.20947C21.5 6.20947 22.2449 13.9344 25.1462 17.1581C28.0476 20.3818 35 21.2095 35 21.2095C35 21.2095 28.0476 22.0371 25.1462 25.2608C22.2449 28.4846 21.5 36.2095 21.5 36.2095C21.5 36.2095 20.7551 28.4846 17.8538 25.2608C14.9524 22.0371 8 21.2095 8 21.2095C8 21.2095 14.9524 20.3818 17.8538 17.1581C20.7551 13.9344 21.5 6.20947 21.5 6.20947Z" fill="#0F5C4F"/>
+        </svg>
+        <div class="brand-name">HireReady</div>
+      </div>
+
+      <div class="pitch">
+        <h2>¡Bienvenido nuevamente!</h2>
+        <p>Bancos de preguntas creados por empresas reales. Simula la entrevista, recibe métricas automáticas de tu desempeño y descubre exactamente en qué mejorar.</p>
+      </div>
+    </div>
+
+    <!-- login form -->
+    <div class="auth-form">
+      <h1>Iniciar sesión</h1>
+      <p class="lead">Ingresa tus credenciales para continuar.</p>
+
+      <form [formGroup]="loginForm" class="form-stack">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" formControlName="email">
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Campo requerido</mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Correo inválido</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Contraseña</mat-label>
+          <input matInput
+                 [type]="hidePassword ? 'password' : 'text'"
+                 formControlName="password">
+          <button mat-icon-button matSuffix type="button"
+                  (click)="hidePassword = !hidePassword"
+                  [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'">
+            <span class="material-symbols-outlined">
+              {{ hidePassword ? 'visibility' : 'visibility_off' }}
+            </span>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Campo requerido</mat-error>
+        </mat-form-field>
+
+        <button class="btn-primary" type="button"
+                (click)="Login()"
+                [disabled]="loading || !loginForm.valid">
+          {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+        </button>
+      </form>
+
+      <div class="auth-foot">
+        <p>¿Todavía no tienes una cuenta? <a routerLink="/register/applicant">Regístrate</a></p>
+      </div>
+    </div>
+
+  </div>
+</div>

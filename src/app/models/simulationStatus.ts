@@ -1,0 +1,1 @@
+export type SimulationStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';

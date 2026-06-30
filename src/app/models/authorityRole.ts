@@ -1,0 +1,1 @@
+export type AuthorityRole = 'ADMIN' | 'COMPANY' | 'APPLICANT';

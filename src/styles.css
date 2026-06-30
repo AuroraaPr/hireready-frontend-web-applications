@@ -1,0 +1,103 @@
+:root {
+  --mat-sys-primary: #1B6E5E;
+  --mat-sys-on-primary: #FFFFFF;
+  --mat-sys-primary-container: #C9EADD;
+  --mat-sys-on-primary-container: #00201A;
+
+  /* HireReady paleta */
+  --hr-bg: #F5F7FA;
+  --hr-surface: #FFFFFF;
+  --hr-primary: #1B6E5E;
+  --hr-primary-dark: #134F45;
+  --hr-primary-light: #2A8B78;
+  --hr-primary-soft: #E8F4F0;
+  --hr-accent: #F2C94C;
+  --hr-accent-soft: #FEF6DC;
+  --hr-text: #1A2230;
+  --hr-text-muted: #5C6779;
+  --hr-text-soft: #8A93A4;
+  --hr-divider: #E5E9F0;
+  --hr-shadow-card: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.04);
+  --hr-shadow-hover: 0 4px 14px rgba(15,23,42,0.08), 0 2px 6px rgba(15,23,42,0.05);
+  --hr-shadow-sidebar: 6px 0 24px rgba(15,23,42,0.08);
+  --hr-radius: 12px;
+  --hr-radius-lg: 16px;
+
+  --rail-width: 72px;
+  --rail-expanded: 240px;
+}
+
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--hr-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  color: var(--hr-text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+}
+
+
+.snackbar-success {
+  --mdc-snackbar-container-color: var(--hr-primary);
+  --mdc-snackbar-supporting-text-color: white;
+}
+.snackbar-error {
+  --mdc-snackbar-container-color: #D85A4A;
+  --mdc-snackbar-supporting-text-color: white;
+}
+
+/* alinear a side bar */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--rail-width) 1fr;
+  min-height: 100vh;
+}
+
+.main-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+
+
+/* compomponentes */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--hr-primary) 0%, var(--hr-primary-light) 100%);
+  color: #FFFFFF;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(27, 110, 94, 0.25);
+  margin-top: 12px;
+  height: 46px;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 110, 94, 0.3);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
