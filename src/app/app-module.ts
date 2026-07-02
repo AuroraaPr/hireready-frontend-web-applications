@@ -33,6 +33,7 @@ import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor';
 import { DetailBank } from './components/shared/detail-bank/detail-bank';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { DetailBank } from './components/shared/detail-bank/detail-bank';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgxChartsModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

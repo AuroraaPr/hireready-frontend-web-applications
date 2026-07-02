@@ -58,6 +58,8 @@ export class Login {
             'Cerrar',
             { duration: 4000, panelClass: 'snackbar-error' },
           );
+          this.loginForm.get("password")?.reset();
+          this.loginForm.get("email")?.reset();
         },
       });
     }

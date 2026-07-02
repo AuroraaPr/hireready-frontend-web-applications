@@ -2,9 +2,152 @@
   <app-sidebar></app-sidebar>
   <div class="main-col">
     <app-topbar [breadcrumb]="'Dashboard'"></app-topbar>
+
     <div class="content">
-      
-        
+
+      <div class="page-header">
+        <div class="header-text">
+          <h1>Hola, {{ userName }} 👋</h1>
+          <p class="lead">Este es el resumen de tu desempeño en simulaciones.</p>
+        </div>
+      </div>
+
+      <!-- loading -->
+      <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando métricas...</span>
+      </div>
+
+      <!-- no data -->
+      <div class="empty-state" *ngIf="!loading && data && !data.hasEnoughData">
+        <span class="material-symbols-outlined">insights</span>
+        <h3>Aún no hay datos suficientes</h3>
+        <p>{{ data.message }}</p>
+        <button class="btn-primary" (click)="IniciarNuevaSimulacion()">
+          <span>Empezar mi primera simulación</span>
+        </button>
+      </div>
+
+
+      <div class="dashboard-grid" *ngIf="!loading && data && data.hasEnoughData">
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Total simulaciones</div>
+              <div class="kpi-value">{{ data.totalSimulations }}</div>
+            </div>
+            <div class="kpi-icon icon-a">
+              <span class="material-symbols-outlined">graphic_eq</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Score promedio</div>
+              <div class="kpi-value">{{ data.averageOverallScore }}<span class="kpi-unit">/100</span></div>
+            </div>
+            <div class="kpi-icon icon-b">
+              <span class="material-symbols-outlined">stars</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Mejor score</div>
+              <div class="kpi-value">{{ data.bestOverallScore }}<span class="kpi-unit">/100</span></div>
+            </div>
+            <div class="kpi-icon icon-c">
+              <span class="material-symbols-outlined">emoji_events</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+                <div class="kpi-label">Tasa de completitud</div>
+                <div class="kpi-value">{{ completionRate }}<span class="kpi-unit">%</span></div>
+            </div>
+            <div class="kpi-icon icon-d">
+                <span class="material-symbols-outlined">task_alt</span>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="main-row">
+
+          <!-- evolución -->
+          <div class="chart-card">
+            <div class="chart-title">Tu progreso a lo largo del tiempo</div>
+            <div class="chart-sub">Score de tus últimas 10 simulaciones completadas</div>
+            <div class="chart-wrap">
+              <ngx-charts-area-chart
+                [results]="scoreOverTimeData"
+                [scheme]="colorScheme"
+                [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel">
+                <ng-template #tooltipTemplate let-model="model">
+                  <div style="padding: 4px 2px;">
+                    <div style="font-weight: 600; font-size: 12px;">{{ tooltipTexto(model) }}</div>
+                    <div style="font-size: 11px; opacity: 0.8;">{{ model.name }}</div>
+                  </div>
+                </ng-template>
+              </ngx-charts-area-chart>
+            </div>
+          </div>
+
+
+          <div class="side-col">
+
+            <!-- dimensiones -->
+            <div class="dim-card">
+              <div class="chart-title">¿Cómo respondes?</div>
+              <div class="chart-sub">Tu promedio en cada dimensión evaluada en los últimos 30 días</div>
+              <div class="dim-row">
+                <div class="dim-item">
+                  <div class="dim-label">Claridad</div>
+                  <div class="dim-bar"><div class="dim-fill" [style.width.%]="data.averageClarity"></div></div>
+                  <div class="dim-value">{{ data.averageClarity }}</div>
+                </div>
+                <div class="dim-item">
+                  <div class="dim-label">Relevancia</div>
+                  <div class="dim-bar"><div class="dim-fill" [style.width.%]="data.averageRelevance"></div></div>
+                  <div class="dim-value">{{ data.averageRelevance }}</div>
+                </div>
+                <div class="dim-item">
+                  <div class="dim-label">Estructura</div>
+                  <div class="dim-bar"><div class="dim-fill" [style.width.%]="data.averageStructure"></div></div>
+                  <div class="dim-value">{{ data.averageStructure }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- muletillas -->
+            <div class="filler-card">
+              <div class="chart-title">Tus muletillas más frecuentes</div>
+              <div class="chart-sub">Palabras que repites sin darte cuenta en los últimos 30 días</div>
+              <div class="filler-list" *ngIf="data.topFillerWords.length > 0">
+                <div class="filler-item" *ngFor="let fw of data.topFillerWords">
+                  <div class="filler-word">"{{ fw.word }}"</div>
+                  <div class="filler-count">{{ fw.count }} veces</div>
+                </div>
+              </div>
+              <div class="chart-empty" *ngIf="data.topFillerWords.length === 0">
+                No detectamos muletillas frecuentes. ¡Vas muy bien!
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 </div>
