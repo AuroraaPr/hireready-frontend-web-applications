@@ -1,1 +1,102 @@
-<p>save-profile-applicant works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Inicio · Mi perfil'"></app-topbar>
+
+    <main class="profile-page">
+      <section class="page-header">
+        <h1>Mi perfil</h1>
+        <p>Mantén tus datos personales y académicos actualizados.</p>
+      </section>
+
+      <section class="profile-grid" *ngIf="!loading; else loadingTemplate">
+        <article class="summary-card">
+          <div class="big-avatar">{{ initials }}</div>
+          <h2>{{ profile.name }}</h2>
+          <p>Postulante</p>
+
+          <div class="divider"></div>
+
+          <div class="stats-row">
+            <div>
+              <strong>{{ totalSimulations }}</strong>
+              <span>Simulaciones</span>
+            </div>
+            <div>
+              <strong>{{ averageScore }}</strong>
+              <span>Score promedio</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="form-card">
+          <div class="card-head">
+            <div>
+              <h2>Información personal y académica</h2>
+              <p>Los datos académicos ayudan a recomendarte mejores simulaciones.</p>
+            </div>
+            <span class="status-pill" *ngIf="saved">● Cambios guardados</span>
+          </div>
+
+          <form class="profile-form">
+            <div class="form-group full">
+              <label>Correo electrónico</label>
+              <div class="readonly-input">
+                <span>{{ profile.email }}</span>
+                <small>No editable</small>
+              </div>
+              <p class="help-text">El email no se puede modificar. Si necesitas cambiarlo, contáctanos.</p>
+            </div>
+
+            <div class="form-group full">
+              <label>Nombre completo <b>*</b></label>
+              <input type="text" name="name" [(ngModel)]="profile.name" />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fecha de nacimiento <b>*</b></label>
+                <input type="text" name="bornDate" placeholder="dd/mm/aaaa" [(ngModel)]="birthDateView" />
+              </div>
+
+              <div class="form-group">
+                <label>Carrera <b>*</b></label>
+                <select name="careerId" [(ngModel)]="profile.careerId">
+                  <option [ngValue]="0">Selecciona una carrera</option>
+                  <option *ngFor="let career of careers" [ngValue]="career.id">{{ career.name }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nivel de estudio <b>*</b></label>
+                <select name="levelStudy" [(ngModel)]="profile.levelStudy">
+                  <option value="">Selecciona un nivel</option>
+                  <option *ngFor="let level of levelOptions" [value]="level">{{ level }}</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Universidad</label>
+                <input type="text" name="university" [(ngModel)]="profile.university" />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
+              <button type="button" class="btn-save" [disabled]="saving" (click)="save()">
+                {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-card">Cargando perfil...</div>
+</ng-template>
