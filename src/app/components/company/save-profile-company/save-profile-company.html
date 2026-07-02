@@ -1,1 +1,75 @@
-<p>save-profile-company works!</p>
+<div class="app-shell company-shell">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Configuración · Perfil de empresa'"></app-topbar>
+
+    <main class="profile-page">
+      <section class="page-header">
+        <h1>Perfil de empresa</h1>
+        <p>Mantén actualizada la información que verán los postulantes en tus bancos de preguntas.</p>
+      </section>
+
+      <section class="profile-grid" *ngIf="!loading; else loadingTemplate">
+        <article class="summary-card">
+          <div class="big-avatar company-avatar">{{ initials }}</div>
+          <h2>{{ company.name }}</h2>
+          <p>{{ company.email }}</p>
+
+          <span class="verified-pill">● Cuenta verificada</span>
+
+          <div class="company-stat">
+            <span>BANCOS PUBLICADOS</span>
+            <strong>{{ totalBanks }} bancos</strong>
+          </div>
+        </article>
+
+        <article class="form-card">
+          <div class="card-head">
+            <div>
+              <h2>Datos de la empresa</h2>
+              <p>Cambios visibles públicamente en cada banco que publiques.</p>
+            </div>
+            <span class="status-pill" *ngIf="saved">● Cambios guardados</span>
+          </div>
+
+          <form class="profile-form">
+            <div class="form-group full">
+              <label>Nombre de la empresa <b>*</b></label>
+              <input type="text" name="name" [(ngModel)]="company.name" />
+            </div>
+
+            <div class="form-group full">
+              <label>Descripción <b>*</b></label>
+              <textarea name="description" maxlength="500" [(ngModel)]="company.description"></textarea>
+              <p class="help-text">{{ company.description.length }} / 500 caracteres</p>
+            </div>
+
+            <div class="form-group full">
+              <label>Correo corporativo</label>
+              <div class="readonly-input">
+                <span class="material-symbols-outlined">mail</span>
+                <span class="email-text">{{ company.email }}</span>
+              </div>
+              <p class="help-text lock-text">
+                <span class="material-symbols-outlined">lock</span>
+                Este campo no es editable. Si necesitas cambiarlo, contáctanos.
+              </p>
+            </div>
+
+            <div class="form-actions company-actions">
+              <button type="button" class="btn-link" (click)="cancel()">Cancelar</button>
+              <button type="button" class="btn-save" [disabled]="saving" (click)="save()">
+                {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-card">Cargando perfil de empresa...</div>
+</ng-template>

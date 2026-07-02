@@ -1,0 +1,83 @@
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Inicio · Historial'"></app-topbar>
+
+    <main class="history-page">
+      <section class="history-head">
+        <div>
+          <h1>Historial de simulaciones</h1>
+          <p>Todas tus simulaciones, ordenadas cronológicamente.</p>
+        </div>
+
+        <div class="filters">
+          <select name="status" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+            <option value="ALL">Todos los estados</option>
+            <option value="COMPLETED">Completadas</option>
+            <option value="IN_PROGRESS">En curso</option>
+            <option value="ABANDONED">Abandonadas</option>
+          </select>
+
+          <select name="company" [(ngModel)]="selectedCompany" (change)="applyFilters()">
+            <option value="ALL">Todas las empresas</option>
+            <option *ngFor="let company of companies" [value]="company">{{ company }}</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Banco / Empresa</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Duración</th>
+              <th>Estado</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of pagedHistory" [class.clickable]="item.canViewReport" (click)="openReport(item)">
+              <td>
+                <strong>{{ item.bankName }}</strong>
+                <span>{{ item.companyName }}</span>
+              </td>
+              <td>{{ formatDate(item.startedAt) }}</td>
+              <td>{{ formatDate(item.completedAt) }}</td>
+              <td>{{ durationText(item) }}</td>
+              <td>
+                <span class="status" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
+              </td>
+              <td class="score-cell">{{ scoreText(item) }}</td>
+            </tr>
+
+            <tr *ngIf="!loading && filteredHistory.length === 0" class="empty-row">
+              <td colspan="6"></td>
+            </tr>
+
+            <tr *ngIf="loading" class="empty-row">
+              <td colspan="6">Cargando historial...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="history-footer">
+        <p>{{ showingText }}</p>
+
+        <div class="pager">
+          <button type="button" [disabled]="currentPage === 1" (click)="previousPage()">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <strong>{{ currentPage }}</strong>
+          <button type="button" [disabled]="currentPage === totalPages" (click)="nextPage()">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
