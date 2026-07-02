@@ -1,1 +1,137 @@
-<p>list-applicants works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Inicio · Postulantes'"></app-topbar>
+
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Postulantes</h1>
+        <p class="subtitle" *ngIf="!loading">
+          {{ applicants.length }} postulantes registrados · {{ totalActivos }} activos · {{ totalInactivos }} desactivados
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="text"
+            placeholder="Buscar por nombre, correo, carrera o universidad..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+          />
+        </div>
+
+        <div class="filter-chips">
+          <button class="chip" [class.chip-active]="filtroEstado === 'all'" (click)="setFiltroEstado('all')">Todos</button>
+          <button class="chip" [class.chip-active]="filtroEstado === 'active'" (click)="setFiltroEstado('active')">Activos</button>
+          <button class="chip" [class.chip-active]="filtroEstado === 'inactive'" (click)="setFiltroEstado('inactive')">Desactivados</button>
+        </div>
+      </div>
+
+      <div class="card">
+
+        <div class="loading-state" *ngIf="loading">
+          <span class="material-symbols-outlined spin">progress_activity</span>
+          Cargando postulantes...
+        </div>
+
+        <div class="error-state" *ngIf="!loading && error">
+          <span class="material-symbols-outlined">error</span>
+          No se pudo cargar la lista de postulantes.
+          <button class="btn-retry" (click)="load()">Reintentar</button>
+        </div>
+
+        <table class="data-table" *ngIf="!loading && !error && filtered.length > 0">
+          <thead>
+            <tr>
+              <th>Postulante</th>
+              <th>Carrera</th>
+              <th>Universidad</th>
+              <th>Nivel</th>
+              <th>Sim.</th>
+              <th>Score prom.</th>
+              <th>Registro</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of paginated">
+              <td>
+                <div class="person-cell">
+                  <div class="avatar-sm">{{ initials(a.name) }}</div>
+                  <div>
+                    <div class="person-name">{{ a.name }}</div>
+                    <div class="person-email">{{ a.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ a.careerName }}</td>
+              <td>{{ a.university }}</td>
+              <td>{{ a.levelStudy }}</td>
+              <td>{{ a.simulationCount }}</td>
+              <td>
+                <span class="na-pill" matTooltip="Aún no disponible: requiere calcular el score promedio en el backend">N/D</span>
+              </td>
+              <td>
+                <span class="na-pill" matTooltip="Aún no disponible: el backend no guarda la fecha de registro">N/D</span>
+              </td>
+              <td>
+                <span class="status-pill" [class.status-on]="a.enabled" [class.status-off]="!a.enabled">
+                  <span class="dot"></span>{{ a.enabled ? 'Activo' : 'Desactivado' }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button
+                  class="icon-btn"
+                  [class.icon-btn-danger]="a.enabled"
+                  [matTooltip]="a.enabled ? 'Desactivar postulante' : 'Reactivar postulante'"
+                  (click)="openConfirm(a)"
+                >
+                  <span class="material-symbols-outlined">{{ a.enabled ? 'block' : 'refresh' }}</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="empty-box" *ngIf="noHayPostulantesRegistrados">
+          <span class="material-symbols-outlined">group_off</span>
+          <p>No hay postulantes registrados.</p>
+        </div>
+
+        <div class="empty-box" *ngIf="sinResultadosPorFiltro">
+          <span class="material-symbols-outlined">person_search</span>
+          <p>No se encontraron postulantes con los filtros aplicados.</p>
+        </div>
+
+        <div class="pagination" *ngIf="!loading && !error && filtered.length > 0">
+          <span class="pagination-info">Mostrando {{ rangoInicio }}-{{ rangoFin }} de {{ filtered.length }} postulantes</span>
+          <div class="pagination-controls">
+            <button class="page-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <span class="page-current">{{ page }} / {{ totalPages }}</span>
+            <button class="page-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirmar-accion
+  [visible]="modalVisible"
+  [targetType]="'applicant'"
+  [action]="modalAction"
+  [targetName]="selected?.name || ''"
+  [targetSubtitle]="selected ? (selected.careerName + ' · ' + selected.university) : ''"
+  [relatedCount]="selected?.simulationCount || 0"
+  (confirmed)="onConfirmed()"
+  (cancelled)="onCancelled()"
+></app-confirmar-accion>

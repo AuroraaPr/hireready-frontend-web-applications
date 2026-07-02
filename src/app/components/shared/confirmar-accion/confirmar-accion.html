@@ -1,1 +1,59 @@
-<p>confirmar-accion works!</p>
+<div class="modal-backdrop" *ngIf="visible" (click)="onBackdropClick()">
+  <div class="modal-card" (click)="stopPropagation($event)">
+
+    <div class="modal-icon" [class.icon-warn]="esDesactivar" [class.icon-ok]="!esDesactivar">
+      <span class="material-symbols-outlined">
+        {{ esDesactivar ? 'warning' : 'check_circle' }}
+      </span>
+    </div>
+
+    <h2 class="modal-title">{{ titulo }}</h2>
+    <p class="modal-desc">{{ descripcion }}</p>
+
+    <div class="target-summary" *ngIf="targetSubtitle">
+      <span class="material-symbols-outlined">{{ esPostulante ? 'person' : 'apartment' }}</span>
+      <div>
+        <div class="target-name">{{ targetName }}</div>
+        <div class="target-sub">{{ targetSubtitle }}</div>
+      </div>
+    </div>
+
+    <div class="checklist-box">
+      <div class="checklist-title">Lo que ocurrirá</div>
+      <ul class="checklist">
+        <li *ngFor="let item of checklist">
+          <span class="material-symbols-outlined check-icon" [class.warn]="esDesactivar">
+            {{ esDesactivar ? 'remove_circle' : 'check_circle' }}
+          </span>
+          <span>{{ item }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="confirm-input" *ngIf="requiereEscribirNombre">
+      <label>Para confirmar, escribe <strong>{{ targetName }}</strong></label>
+      <input
+        type="text"
+        [(ngModel)]="confirmText"
+        [placeholder]="targetName"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" type="button" (click)="onCancel()" [disabled]="loading">Cancelar</button>
+      <button
+        class="btn-confirm"
+        type="button"
+        [class.btn-danger]="esDesactivar"
+        [class.btn-ok]="!esDesactivar"
+        (click)="onConfirm()"
+        [disabled]="!puedeConfirmar || loading"
+      >
+        <span class="material-symbols-outlined">{{ esDesactivar ? 'block' : 'refresh' }}</span>
+        {{ loading ? 'Procesando...' : (esDesactivar ? 'Sí, desactivar ' + etiquetaRol : 'Sí, reactivar ' + etiquetaRol) }}
+      </button>
+    </div>
+
+  </div>
+</div>

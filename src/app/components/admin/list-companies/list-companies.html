@@ -1,1 +1,135 @@
-<p>list-companies works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Inicio · Empresas'"></app-topbar>
+
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Empresas</h1>
+        <p class="subtitle" *ngIf="!loading">
+          {{ companies.length }} empresas registradas · {{ totalActivos }} activas · {{ totalInactivos }} desactivadas
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="text"
+            placeholder="Buscar por nombre, correo o rubro..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+          />
+        </div>
+
+        <div class="filter-chips">
+          <button class="chip" [class.chip-active]="filtroEstado === 'all'" (click)="setFiltroEstado('all')">Todas</button>
+          <button class="chip" [class.chip-active]="filtroEstado === 'active'" (click)="setFiltroEstado('active')">Activas</button>
+          <button class="chip" [class.chip-active]="filtroEstado === 'inactive'" (click)="setFiltroEstado('inactive')">Desactivadas</button>
+        </div>
+      </div>
+
+      <div class="card">
+
+        <div class="loading-state" *ngIf="loading">
+          <span class="material-symbols-outlined spin">progress_activity</span>
+          Cargando empresas...
+        </div>
+
+        <div class="error-state" *ngIf="!loading && error">
+          <span class="material-symbols-outlined">error</span>
+          No se pudo cargar la lista de empresas.
+          <button class="btn-retry" (click)="load()">Reintentar</button>
+        </div>
+
+        <table class="data-table" *ngIf="!loading && !error && filtered.length > 0">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Contacto</th>
+              <th>Bancos</th>
+              <th>Sim. generadas</th>
+              <th>Score prom.</th>
+              <th>Registro</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of paginated">
+              <td>
+                <div class="person-cell">
+                  <div class="avatar-sm avatar-square">{{ initials(c.name) }}</div>
+                  <div>
+                    <div class="person-name">{{ c.name }}</div>
+                    <div class="person-email">{{ c.description }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ c.email }}</td>
+              <td>{{ c.questionBankCount }}</td>
+              <td>{{ c.simulationsGenerated }}</td>
+              <td>
+                <span class="na-pill" matTooltip="Aún no disponible: requiere calcular el score promedio en el backend">N/D</span>
+              </td>
+              <td>
+                <span class="na-pill" matTooltip="Aún no disponible: el backend no guarda la fecha de registro">N/D</span>
+              </td>
+              <td>
+                <span class="status-pill" [class.status-on]="c.enabled" [class.status-off]="!c.enabled">
+                  <span class="dot"></span>{{ c.enabled ? 'Activa' : 'Desactivada' }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button
+                  class="icon-btn"
+                  [class.icon-btn-danger]="c.enabled"
+                  [matTooltip]="c.enabled ? 'Desactivar empresa' : 'Reactivar empresa'"
+                  (click)="openConfirm(c)"
+                >
+                  <span class="material-symbols-outlined">{{ c.enabled ? 'block' : 'refresh' }}</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="empty-box" *ngIf="noHayEmpresasRegistradas">
+          <span class="material-symbols-outlined">domain_disabled</span>
+          <p>No hay empresas registradas.</p>
+        </div>
+
+        <div class="empty-box" *ngIf="sinResultadosPorFiltro">
+          <span class="material-symbols-outlined">search_off</span>
+          <p>No se encontraron empresas con los filtros aplicados.</p>
+        </div>
+
+        <div class="pagination" *ngIf="!loading && !error && filtered.length > 0">
+          <span class="pagination-info">Mostrando {{ rangoInicio }}-{{ rangoFin }} de {{ filtered.length }} empresas</span>
+          <div class="pagination-controls">
+            <button class="page-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <span class="page-current">{{ page }} / {{ totalPages }}</span>
+            <button class="page-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-confirmar-accion
+  [visible]="modalVisible"
+  [targetType]="'company'"
+  [action]="modalAction"
+  [targetName]="selected?.name || ''"
+  [targetSubtitle]="selected ? (selected.description || selected.email) : ''"
+  [relatedCount]="selected?.questionBankCount || 0"
+  (confirmed)="onConfirmed()"
+  (cancelled)="onCancelled()"
+></app-confirmar-accion>

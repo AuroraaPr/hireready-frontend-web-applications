@@ -1,0 +1,161 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fade-in 0.15s ease;
+}
+
+.modal-card {
+  background: var(--hr-surface);
+  border-radius: var(--hr-radius-lg);
+  width: 100%;
+  max-width: 460px;
+  padding: 28px;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.28);
+  animation: pop-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+}
+.modal-icon .material-symbols-outlined { font-size: 24px; }
+.icon-warn { background: #FCE8E4; color: #D85A4A; }
+.icon-ok { background: var(--hr-primary-soft); color: var(--hr-primary); }
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--hr-text);
+  margin: 0 0 8px;
+}
+
+.modal-desc {
+  font-size: 13.5px;
+  color: var(--hr-text-muted);
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+
+.target-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--hr-bg);
+  border-radius: var(--hr-radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.target-summary .material-symbols-outlined {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--hr-surface);
+  color: var(--hr-text-muted);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.target-name { font-size: 13.5px; font-weight: 600; color: var(--hr-text); }
+.target-sub { font-size: 12px; color: var(--hr-text-muted); margin-top: 1px; }
+
+.checklist-box {
+  background: var(--hr-bg);
+  border-radius: var(--hr-radius);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.checklist-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--hr-text-soft);
+  margin-bottom: 10px;
+}
+.checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--hr-text-muted);
+  line-height: 1.4;
+}
+.check-icon { font-size: 18px; flex-shrink: 0; color: var(--hr-primary); margin-top: -1px; }
+.check-icon.warn { color: #D85A4A; }
+
+.confirm-input { margin-bottom: 20px; }
+.confirm-input label {
+  display: block;
+  font-size: 12.5px;
+  color: var(--hr-text-muted);
+  margin-bottom: 8px;
+}
+.confirm-input label strong { color: var(--hr-text); }
+.confirm-input input {
+  width: 100%;
+  height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid var(--hr-divider);
+  padding: 0 14px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--hr-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.confirm-input input:focus { border-color: var(--hr-primary); }
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+.btn-cancel {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 1.5px solid var(--hr-divider);
+  background: var(--hr-surface);
+  color: var(--hr-text);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-cancel:hover:not(:disabled) { background: var(--hr-bg); }
+.btn-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-confirm {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+.btn-confirm .material-symbols-outlined { font-size: 18px; }
+.btn-confirm.btn-danger { background: linear-gradient(135deg, #D85A4A, #C0483A); box-shadow: 0 1px 3px rgba(216, 90, 74, 0.3); }
+.btn-confirm.btn-ok { background: linear-gradient(135deg, var(--hr-primary), var(--hr-primary-light)); box-shadow: 0 1px 3px rgba(27, 110, 94, 0.3); }
+.btn-confirm:hover:not(:disabled) { transform: translateY(-1px); }
+.btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }

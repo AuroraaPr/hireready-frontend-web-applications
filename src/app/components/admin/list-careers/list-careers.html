@@ -1,1 +1,117 @@
-<p>list-careers works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Inicio · Carreras'"></app-topbar>
+
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Catálogo de carreras</h1>
+        <p class="subtitle" *ngIf="!loading">{{ careers.length }} carreras registradas en el sistema.</p>
+      </div>
+
+      <div class="layout">
+
+        <div class="main-panel">
+
+          <div class="card add-card">
+            <span class="material-symbols-outlined add-icon">add</span>
+            <input
+              type="text"
+              placeholder="Agregar nueva carrera al catálogo (ej. Ing. Biomédica)..."
+              [(ngModel)]="newCareerName"
+              (keyup.enter)="addCareer()"
+              [disabled]="saving"
+            />
+            <button class="btn-add" (click)="addCareer()" [disabled]="saving || newCareerName.trim().length === 0">
+              {{ saving ? 'Guardando...' : 'Agregar carrera' }}
+            </button>
+          </div>
+
+          <div class="sort-row">
+            <button class="sort-btn" (click)="toggleSort()">
+              <span class="material-symbols-outlined">{{ sortAsc ? 'arrow_upward' : 'arrow_downward' }}</span>
+              Ordenar {{ sortAsc ? 'A-Z' : 'Z-A' }}
+            </button>
+          </div>
+
+          <div class="card">
+
+            <div class="loading-state" *ngIf="loading">
+              <span class="material-symbols-outlined spin">progress_activity</span>
+              Cargando carreras...
+            </div>
+
+            <div class="error-state" *ngIf="!loading && error">
+              <span class="material-symbols-outlined">error</span>
+              No se pudo cargar el catálogo de carreras.
+              <button class="btn-retry" (click)="load()">Reintentar</button>
+            </div>
+
+            <ul class="career-list" *ngIf="!loading && !error && sortedCareers.length > 0">
+              <li *ngFor="let career of sortedCareers" class="career-row">
+
+                <ng-container *ngIf="editingId !== career.id">
+                  <span class="career-name">{{ career.name }}</span>
+                  <div class="career-actions">
+                    <button class="icon-btn" matTooltip="Renombrar" (click)="startEdit(career)">
+                      <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    <button class="icon-btn" [matMenuTriggerFor]="menu" matTooltip="Más opciones">
+                      <span class="material-symbols-outlined">more_vert</span>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="startEdit(career)">
+                        <span class="material-symbols-outlined menu-icon">edit</span>
+                        Renombrar
+                      </button>
+                    </mat-menu>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngIf="editingId === career.id">
+                  <div class="edit-row">
+                    <input
+                      type="text"
+                      class="edit-input"
+                      [(ngModel)]="editingName"
+                      (keyup.enter)="saveEdit(career)"
+                      (keyup.escape)="cancelEdit()"
+                      [disabled]="saving"
+                      autofocus
+                    />
+                    <button class="icon-btn icon-btn-ok" matTooltip="Guardar" (click)="saveEdit(career)" [disabled]="saving">
+                      <span class="material-symbols-outlined">check</span>
+                    </button>
+                    <button class="icon-btn" matTooltip="Cancelar" (click)="cancelEdit()" [disabled]="saving">
+                      <span class="material-symbols-outlined">close</span>
+                    </button>
+                  </div>
+                </ng-container>
+
+              </li>
+            </ul>
+
+            <div class="empty-box" *ngIf="!loading && !error && sortedCareers.length === 0">
+              <span class="material-symbols-outlined">school</span>
+              <p>Todavía no hay carreras registradas en el catálogo.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <aside class="side-panel">
+          <div class="info-card">
+            <div class="info-title">
+              <span class="material-symbols-outlined">info</span>
+              Sobre el catálogo
+            </div>
+            <p>Las carreras alimentan la lista que ven empresas y postulantes en sus respectivos formularios.</p>
+            <p>Editar el nombre de una carrera <strong>actualiza</strong> todas las referencias automáticamente.</p>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+</div>
