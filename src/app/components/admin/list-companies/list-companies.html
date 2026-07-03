@@ -50,8 +50,6 @@
               <th>Contacto</th>
               <th>Bancos</th>
               <th>Sim. generadas</th>
-              <th>Score prom.</th>
-              <th>Registro</th>
               <th>Estado</th>
               <th></th>
             </tr>
@@ -70,12 +68,6 @@
               <td>{{ c.email }}</td>
               <td>{{ c.questionBankCount }}</td>
               <td>{{ c.simulationsGenerated }}</td>
-              <td>
-                <span class="na-pill" matTooltip="Aún no disponible: requiere calcular el score promedio en el backend">N/D</span>
-              </td>
-              <td>
-                <span class="na-pill" matTooltip="Aún no disponible: el backend no guarda la fecha de registro">N/D</span>
-              </td>
               <td>
                 <span class="status-pill" [class.status-on]="c.enabled" [class.status-off]="!c.enabled">
                   <span class="dot"></span>{{ c.enabled ? 'Activa' : 'Desactivada' }}
@@ -111,7 +103,15 @@
             <button class="page-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">
               <span class="material-symbols-outlined">chevron_left</span>
             </button>
-            <span class="page-current">{{ page }} / {{ totalPages }}</span>
+            <ng-container *ngFor="let p of pageNumbers">
+              <button
+                *ngIf="p !== '...'"
+                class="page-number"
+                [class.page-number-active]="p === page"
+                (click)="goToPage($any(p))"
+              >{{ p }}</button>
+              <span *ngIf="p === '...'" class="page-dots">…</span>
+            </ng-container>
             <button class="page-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">
               <span class="material-symbols-outlined">chevron_right</span>
             </button>

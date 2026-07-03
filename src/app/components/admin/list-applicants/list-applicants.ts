@@ -125,6 +125,30 @@ export class ListApplicants implements OnInit {
     this.page = p;
   }
 
+  // genera los números de página a mostrar como bloques, con "..." cuando hay muchas páginas
+  // ej: 1 2 3 ... 8  |  1 ... 4 5 6 ... 12
+  get pageNumbers(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.page;
+    const delta = 1;
+    const result: (number | string)[] = [];
+    let last = 0;
+
+    for (let i = 1; i <= total; i++) {
+      const isEdge = i === 1 || i === total;
+      const isNearCurrent = i >= current - delta && i <= current + delta;
+      if (!isEdge && !isNearCurrent) continue;
+
+      if (last !== 0 && i - last > 1) {
+        result.push('...');
+      }
+      result.push(i);
+      last = i;
+    }
+
+    return result;
+  }
+
   initials(name: string): string {
     const parts = name.trim().split(/\s+/).filter((p) => p.length > 0);
     if (parts.length === 0) return '?';

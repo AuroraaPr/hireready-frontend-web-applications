@@ -9,8 +9,6 @@ import { AccionTipo } from '../../shared/confirmar-accion/confirmar-accion';
 
 type FiltroEstado = 'all' | 'active' | 'inactive';
 
-// Extiende el DTO del backend con datos derivados calculados en el frontend
-// a partir de otro endpoint ya existente (/admin/question-banks), sin tocar el back.
 export interface CompanyRow extends CompanySummaryResponseDTO {
   simulationsGenerated: number;
 }
@@ -148,6 +146,28 @@ export class ListCompanies implements OnInit {
     this.page = p;
   }
 
+  get pageNumbers(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.page;
+    const delta = 1;
+    const result: (number | string)[] = [];
+    let last = 0;
+
+    for (let i = 1; i <= total; i++) {
+      const isEdge = i === 1 || i === total;
+      const isNearCurrent = i >= current - delta && i <= current + delta;
+      if (!isEdge && !isNearCurrent) continue;
+
+      if (last !== 0 && i - last > 1) {
+        result.push('...');
+      }
+      result.push(i);
+      last = i;
+    }
+
+    return result;
+  }
+
   initials(name: string): string {
     const parts = name.trim().split(/\s+/).filter((p) => p.length > 0);
     if (parts.length === 0) return '?';
@@ -155,7 +175,6 @@ export class ListCompanies implements OnInit {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  // acciones de activar / desactivar
 
   openConfirm(company: CompanyRow): void {
     this.selected = company;

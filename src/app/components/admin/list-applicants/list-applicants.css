@@ -187,7 +187,6 @@
 .icon-btn:hover { background: var(--hr-primary-soft); color: var(--hr-primary-dark); }
 .icon-btn-danger:hover { background: #FCE8E4; color: #B0392D; }
 
-/* paginación */
 .pagination {
   display: flex;
   align-items: center;
@@ -211,19 +210,30 @@
 .page-btn .material-symbols-outlined { font-size: 18px; }
 .page-btn:hover:not(:disabled) { background: var(--hr-bg); }
 .page-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.page-current { font-size: 12.5px; font-weight: 600; color: var(--hr-text); min-width: 46px; text-align: center; }
 
-/* dato aún no disponible por limitación de backend (mostrado a pedido, no inventado) */
-.na-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 9px;
-  border-radius: 6px;
-  background: var(--hr-bg);
+.page-number {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 7px;
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: var(--hr-text-muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.page-number:hover { background: var(--hr-bg); }
+.page-number-active {
+  background: var(--hr-primary);
+  border-color: var(--hr-primary);
+  color: #FFFFFF;
+}
+.page-number-active:hover { background: var(--hr-primary); }
+.page-dots {
   color: var(--hr-text-soft);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border: 1px dashed var(--hr-divider);
-  cursor: help;
+  font-size: 12.5px;
+  padding: 0 2px;
 }
