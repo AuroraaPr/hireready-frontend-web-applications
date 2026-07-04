@@ -1,0 +1,134 @@
+.detail-dialog {
+  background: var(--hr-surface);
+  width: 100%;
+}
+
+
+.dialog-head {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--hr-divider);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.head-company {
+  font-size: 11.5px;
+  color: var(--hr-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+.dialog-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--hr-text);
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--hr-text-muted);
+  padding: 4px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.close-btn:hover {
+  background: var(--hr-bg);
+  color: var(--hr-text);
+}
+.close-btn .material-symbols-outlined { font-size: 22px; }
+
+
+.dialog-body {
+  padding: 22px 28px 28px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.dialog-desc {
+  font-size: 13.5px;
+  color: var(--hr-text-muted);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--hr-bg);
+  border-radius: 10px;
+  margin-bottom: 22px;
+}
+.meta-label {
+  font-size: 10.5px;
+  color: var(--hr-text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.meta-value {
+  font-size: 14px;
+  color: var(--hr-text);
+  font-weight: 600;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hr-text-muted);
+  margin-bottom: 10px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+.chip {
+  background: var(--hr-primary-soft);
+  color: var(--hr-primary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.q-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.q-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--hr-divider);
+}
+.q-item:last-child { border-bottom: none; }
+.q-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--hr-primary-soft);
+  color: var(--hr-primary);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.q-text {
+  font-size: 13.5px;
+  color: var(--hr-text);
+  line-height: 1.5;
+  padding-top: 2px;
+}

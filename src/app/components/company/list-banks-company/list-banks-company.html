@@ -1,1 +1,73 @@
-<p>list-banks-company works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Mis bancos'"></app-topbar>
+
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Mis bancos de preguntas</h1>
+        <p class="lead">Los bancos que has publicado para evaluar postulantes.</p>
+      </div>
+
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" placeholder="Buscar por nombre o puesto..."
+                 [(ngModel)]="searchText" (ngModelChange)="aplicarFiltros()">
+        </div>
+        <select class="filter-select" [(ngModel)]="selectedLevel" (ngModelChange)="aplicarFiltros()">
+          <option value="">Todos los niveles</option>
+          <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
+        </select>
+      </div>
+
+      <!-- loading -->
+      <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando bancos...</span>
+      </div>
+
+      <!-- sin data -->
+      <div class="empty-state" *ngIf="!loading && allBanks.length === 0">
+        <span class="material-symbols-outlined">library_add</span>
+        <h3>Aún no tienes bancos</h3>
+        <p>Crea tu primer banco de preguntas para empezar a evaluar postulantes.</p>
+      </div>
+
+      <!-- filtro -->
+      <div class="empty-state" *ngIf="!loading && allBanks.length > 0 && banks.length === 0">
+        <span class="material-symbols-outlined">search_off</span>
+        <h3>No se encontraron bancos</h3>
+        <p>Prueba ajustando los filtros o el término de búsqueda.</p>
+      </div>
+
+      <!-- cards -->
+      <div class="cards-list" *ngIf="!loading && banks.length > 0">
+        <div class="bank-row" *ngFor="let b of banks" (click)="VerDetalle(b.id)">
+          <div class="bank-main">
+            <div class="bank-title">{{ b.name }}</div>
+            <div class="bank-desc">{{ b.description }}</div>
+            <div class="bank-tags">
+              <span class="meta-pill"><span class="material-symbols-outlined">work</span>{{ b.jobPosition }}</span>
+              <span class="meta-pill"><span class="material-symbols-outlined">signal_cellular_alt</span>{{ b.level }}</span>
+              <span class="chip" *ngFor="let career of b.careerNames">{{ career }}</span>
+            </div>
+          </div>
+          <div class="bank-side">
+            <div class="bank-stat">
+              <div class="bank-stat-value">{{ b.numQuestions }}</div>
+              <div class="bank-stat-label">preguntas</div>
+            </div>
+            <span class="bank-status" [ngClass]="esActivo(b.status) ? 'status-active' : 'status-inactive'">
+              {{ esActivo(b.status) ? 'Activo' : 'Sin uso' }}
+            </span>
+            <div class="bank-arrow"><span class="material-symbols-outlined">chevron_right</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
