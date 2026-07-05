@@ -1,1 +1,256 @@
-<p>save-bank-company works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Mis bancos · Crear banco'"></app-topbar>
+
+    <div class="content">
+
+      <div class="page-header">
+        <div>
+          <h1>Nuevo banco de preguntas</h1>
+          <p class="subtitle">Define el puesto, nivel, carreras objetivo y la lista de preguntas que verán los postulantes.</p>
+        </div>
+
+        <div class="header-actions">
+          <button mat-stroked-button type="button" class="btn-outline" (click)="cancel()" [disabled]="saving">
+            Cancelar
+          </button>
+          <button class="btn-primary" type="button" (click)="publish()" [disabled]="saving">
+            {{ saving ? 'Publicando...' : 'Publicar banco' }}
+          </button>
+        </div>
+      </div>
+
+      <form [formGroup]="form" class="layout-grid">
+
+        <div class="main-panel">
+
+          <!-- Datos generales -->
+          <div class="card section-card">
+            <div class="section-head">
+              <h2>Datos generales</h2>
+              <p>Información que verán los postulantes en la lista de simulaciones.</p>
+            </div>
+
+            <mat-form-field appearance="outline" class="field full">
+              <mat-label>Nombre del banco</mat-label>
+              <input matInput formControlName="name" maxlength="120" placeholder="Ej. Backend Engineer Junior · Q2 2026">
+              <mat-error *ngIf="nameControl.hasError('required')">Campo requerido</mat-error>
+            </mat-form-field>
+
+            <div class="field-row">
+              <mat-form-field appearance="outline" class="field half">
+                <mat-label>Puesto</mat-label>
+                <input matInput formControlName="jobPosition" maxlength="120" placeholder="Ej. Backend Developer">
+                <mat-error *ngIf="jobPositionControl.hasError('required')">Campo requerido</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field half">
+                <mat-label>Modalidad de práctica</mat-label>
+                <mat-select formControlName="modality">
+                  <mat-option *ngFor="let m of modalities" [value]="m.value">{{ m.label }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="field full no-margin">
+              <mat-label>Descripción</mat-label>
+              <textarea
+                matInput
+                rows="3"
+                formControlName="description"
+                maxlength="500"
+                placeholder="Evalúa fundamentos de Node.js / Python, diseño de APIs REST..."
+              ></textarea>
+              <mat-error *ngIf="descriptionControl.hasError('required')">Campo requerido</mat-error>
+            </mat-form-field>
+            <div class="char-counter">{{ descriptionControl.value?.length || 0 }} / {{ descriptionMaxLength }} caracteres</div>
+          </div>
+
+          <!-- Audiencia objetivo -->
+          <div class="card section-card">
+            <div class="section-head">
+              <h2>Audiencia objetivo</h2>
+              <p>Define el nivel y las carreras compatibles con este banco.</p>
+            </div>
+
+            <label class="field-label">Nivel <span class="required-mark">*</span></label>
+            <div class="level-group">
+              <button
+                type="button"
+                *ngFor="let lvl of levels"
+                class="chip"
+                [class.chip-active]="levelControl.value === lvl.value"
+                (click)="selectLevel(lvl.value)"
+              >{{ lvl.label }}</button>
+            </div>
+
+            <label class="field-label career-label">
+              Carreras compatibles <span class="required-mark">*</span>
+              <span class="hint">— selecciona una o más</span>
+            </label>
+
+            <div class="loading-inline" *ngIf="loadingCareers">
+              <span class="material-symbols-outlined spin">progress_activity</span> Cargando carreras...
+            </div>
+
+            <div class="error-inline" *ngIf="!loadingCareers && errorCareers">
+              <span class="material-symbols-outlined">error</span>
+              No se pudieron cargar las carreras.
+              <button type="button" class="btn-retry" (click)="loadCareers()">Reintentar</button>
+            </div>
+
+            <div class="career-grid" *ngIf="!loadingCareers && !errorCareers">
+              <button
+                type="button"
+                *ngFor="let c of selectedCareers"
+                class="career-pill career-pill-selected"
+                (click)="removeCareer(c)"
+              >
+                {{ c.name }}
+                <span class="material-symbols-outlined">close</span>
+              </button>
+
+              <button
+                type="button"
+                *ngFor="let c of unselectedCareers"
+                class="career-pill"
+                (click)="toggleCareer(c)"
+              >{{ c.name }}</button>
+            </div>
+
+            <p class="career-summary" *ngIf="!loadingCareers && !errorCareers">
+              {{ selectedCareerIds.length }} carrera{{ selectedCareerIds.length === 1 ? '' : 's' }} seleccionada{{ selectedCareerIds.length === 1 ? '' : 's' }}
+              · puedes elegir más desde el catálogo de carreras.
+            </p>
+          </div>
+
+          <!-- Preguntas -->
+          <div class="card section-card">
+            <div class="section-head questions-head">
+              <div>
+                <h2>Preguntas ({{ questionsArray.length }})</h2>
+                <p>Arrastra para reordenar. Cada pregunta tendrá un máximo de 2 minutos de respuesta en audio.</p>
+              </div>
+              <span class="order-badge"><span class="dot"></span>Orden visible al postulante</span>
+            </div>
+
+            <ul class="question-list" cdkDropList (cdkDropListDropped)="onDropQuestion($event)">
+              <li class="question-row" *ngFor="let q of questionsArray.controls; let i = index" cdkDrag [cdkDragDisabled]="editingIndex === i">
+                <span class="drag-handle material-symbols-outlined" cdkDragHandle>drag_indicator</span>
+                <span class="question-number">{{ i + 1 }}</span>
+
+                <ng-container *ngIf="editingIndex !== i; else editingTpl">
+                  <span class="question-text">{{ q.value || 'Pregunta sin contenido' }}</span>
+                </ng-container>
+                <ng-template #editingTpl>
+                  <input
+                    class="question-input"
+                    type="text"
+                    [formControl]="q"
+                    maxlength="500"
+                    placeholder="Escribe la pregunta..."
+                    (keyup.enter)="confirmQuestion(i)"
+                    (blur)="confirmQuestion(i)"
+                  >
+                </ng-template>
+
+                <div class="question-actions">
+                  <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="Editar pregunta"
+                    (click)="editQuestion(i)"
+                  >
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="danger"
+                    matTooltip="Eliminar pregunta"
+                    (click)="removeQuestion(i)"
+                  >
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+
+            <div class="empty-questions" *ngIf="questionsArray.length === 0">
+              <span class="material-symbols-outlined">quiz</span>
+              <p>Todavía no agregas preguntas. Agrega al menos una para poder publicar el banco.</p>
+            </div>
+
+            <button type="button" class="add-question-btn" (click)="addQuestion()">
+              <span class="material-symbols-outlined">add</span>
+              Agregar pregunta
+              <span class="add-hint" *ngIf="questionsToRecommendedCount > 0">
+                · {{ questionsToRecommendedCount }} más para completar el banco recomendado
+              </span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- columna derecha -->
+        <div class="side-panel">
+
+          <div class="card preview-card">
+            <h3 class="side-title">Vista previa</h3>
+            <p class="side-subtitle">Así verá el postulante tu banco</p>
+
+            <div class="preview-body">
+              <div class="preview-badge">{{ previewInitials }}</div>
+              <div class="preview-info">
+                <div class="preview-name">{{ nameControl.value || 'Nombre del banco' }}</div>
+                <div class="preview-company">{{ companyName || 'Tu empresa' }}</div>
+              </div>
+            </div>
+
+            <p class="preview-desc">{{ descriptionControl.value || 'La descripción aparecerá aquí.' }}</p>
+
+            <div class="preview-tags">
+              <span class="tag tag-level">{{ levelControl.value }}</span>
+              <span class="tag tag-count">{{ questionsArray.length }} pregunta{{ questionsArray.length === 1 ? '' : 's' }}</span>
+            </div>
+          </div>
+
+          <div class="card checklist-card">
+            <h3 class="side-title">Lista de verificación</h3>
+
+            <ul class="checklist">
+              <li [class.done]="hasName">
+                <span class="material-symbols-outlined">{{ hasName ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                Nombre del banco
+              </li>
+              <li [class.done]="hasJobPosition">
+                <span class="material-symbols-outlined">{{ hasJobPosition ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                Puesto definido
+              </li>
+              <li [class.done]="hasLevel">
+                <span class="material-symbols-outlined">{{ hasLevel ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                Nivel seleccionado
+              </li>
+              <li [class.done]="hasAtLeastOneCareer">
+                <span class="material-symbols-outlined">{{ hasAtLeastOneCareer ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                Al menos 1 carrera <span class="count">({{ selectedCareerIds.length }})</span>
+              </li>
+              <li [class.done]="hasAtLeastOneQuestion">
+                <span class="material-symbols-outlined">{{ hasAtLeastOneQuestion ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                Al menos 1 pregunta <span class="count">({{ questionsArray.length }})</span>
+              </li>
+              <li class="info-item" [class.done]="isWithinRecommendedRange">
+                <span class="material-symbols-outlined">{{ isWithinRecommendedRange ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                Recomendado: {{ recommendedMin }}-{{ recommendedMax }} preguntas
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>

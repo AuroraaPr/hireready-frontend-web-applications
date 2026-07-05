@@ -33,6 +33,7 @@ import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor';
 import { DetailBank } from './components/shared/detail-bank/detail-bank';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
@@ -72,6 +73,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    DragDropModule,
     NgxChartsModule,
   ],
   providers: [
