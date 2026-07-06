@@ -1,0 +1,275 @@
+.profile-page {
+  min-height: calc(100vh - 68px);
+  padding: 30px 30px 44px;
+  background: var(--hr-bg);
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--hr-text);
+}
+
+.page-header p {
+  margin: 8px 0 22px;
+  color: var(--hr-text-muted);
+  font-size: 14px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 22px;
+  align-items: stretch;
+}
+
+.summary-card,
+.form-card,
+.loading-card {
+  background: var(--hr-surface);
+  border: 1px solid var(--hr-divider);
+  border-radius: var(--hr-radius-lg);
+  box-shadow: var(--hr-shadow-card);
+}
+
+.summary-card {
+  min-height: 520px;
+  padding: 28px 22px;
+  text-align: center;
+}
+
+.big-avatar {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--hr-primary);
+  color: #fff;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.company-avatar {
+  background: #df3617;
+}
+
+.summary-card h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.summary-card p {
+  margin: 4px 0 14px;
+  color: var(--hr-text-muted);
+  font-size: 12px;
+}
+
+.verified-pill {
+  display: inline-block;
+  margin: 4px 0 30px;
+  background: var(--hr-primary-soft);
+  color: var(--hr-primary);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.company-stat {
+  text-align: left;
+  padding-left: 42px;
+}
+
+.company-stat span {
+  display: block;
+  color: var(--hr-text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.company-stat strong {
+  display: block;
+  color: var(--hr-text);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.form-card {
+  min-height: 520px;
+  padding: 22px 20px 18px;
+}
+
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.card-head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.card-head p {
+  margin: 4px 0 0;
+  color: var(--hr-text-muted);
+  font-size: 11px;
+}
+
+.status-pill {
+  background: var(--hr-primary-soft);
+  color: var(--hr-primary);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.profile-form {
+  padding-top: 22px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--hr-text);
+}
+
+label b {
+  color: #e14b3b;
+}
+
+input,
+textarea,
+.readonly-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0 14px;
+  color: var(--hr-text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+input {
+  height: 38px;
+}
+
+textarea {
+  height: 64px;
+  padding: 12px 14px;
+  resize: none;
+  line-height: 1.35;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--hr-primary);
+  box-shadow: 0 0 0 3px rgba(27, 110, 94, 0.08);
+}
+
+.readonly-input {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f6fa;
+  color: var(--hr-text-muted);
+}
+
+.readonly-input .material-symbols-outlined,
+.lock-text .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.email-text {
+  flex: 1;
+}
+
+.help-text {
+  margin: 6px 0 0;
+  color: var(--hr-text-muted);
+  font-size: 11px;
+}
+
+.lock-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 126px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hr-divider);
+}
+
+.btn-link,
+.btn-save {
+  height: 36px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-link {
+  border: none;
+  background: transparent;
+  color: var(--hr-text-muted);
+}
+
+.btn-save {
+  padding: 0 18px;
+  background: var(--hr-primary);
+  border: 1px solid var(--hr-primary);
+  color: #fff;
+}
+
+.btn-save:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.loading-card {
+  padding: 28px;
+  color: var(--hr-text-muted);
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card,
+  .form-card {
+    min-height: auto;
+  }
+
+  .form-actions {
+    margin-top: 32px;
+  }
+}

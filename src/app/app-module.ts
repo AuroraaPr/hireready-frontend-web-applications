@@ -7,7 +7,6 @@ import { Sidebar } from './components/shared/sidebar/sidebar';
 import { Topbar } from './components/shared/topbar/topbar';
 import { EmptyState } from './components/shared/empty-state/empty-state';
 import { ScorePill } from './components/shared/score-pill/score-pill';
-import { AudioPlayer } from './components/shared/audio-player/audio-player';
 import { ConfirmarAccion } from './components/shared/confirmar-accion/confirmar-accion';
 import { Login } from './components/auth/login/login';
 import { RegisterApplicant } from './components/auth/register-applicant/register-applicant';
@@ -33,6 +32,9 @@ import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor';
 import { DetailBank } from './components/shared/detail-bank/detail-bank';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { AvatarRobot } from './components/shared/avatar-robot/avatar-robot';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,6 @@ import { DetailBank } from './components/shared/detail-bank/detail-bank';
     Topbar,
     EmptyState,
     ScorePill,
-    AudioPlayer,
     ConfirmarAccion,
     Login,
     RegisterApplicant,
@@ -62,6 +63,7 @@ import { DetailBank } from './components/shared/detail-bank/detail-bank';
     ListBanksAdmin,
     ListCareers,
     DetailBank,
+    AvatarRobot,
   ],
   imports: [
     BrowserModule,
@@ -71,6 +73,8 @@ import { DetailBank } from './components/shared/detail-bank/detail-bank';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    DragDropModule,
+    NgxChartsModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -27,6 +27,12 @@ export class SimulationService {
     return this.http.get<ContinueSimulationResponseDTO>(this.ruta_servidor + '/applicants/me/' + this.recurso + '/current');
   }
 
+  getCurrentByBank(bankId: number) {
+    return this.http.get<ContinueSimulationResponseDTO>(
+      this.ruta_servidor + '/applicants/me/' + this.recurso + '/current-by-bank?bankId=' + bankId
+    );
+  }
+
   submitResponse(simulationId: number, questionId: number, duration: number, audio: Blob) {
     const formData = new FormData();
     formData.append('questionId', String(questionId));

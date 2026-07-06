@@ -1,1 +1,92 @@
-<p>run-simulation works!</p>
+<div class="sim-screen">
+
+  <div class="sim-topbar">
+    <div class="sim-brand">
+      <div class="sim-logo">
+        <svg viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21.5 6.2C21.5 6.2 22.2 13.9 25.1 17.2C28 20.4 35 21.2 35 21.2C35 21.2 28 22 25.1 25.3C22.2 28.5 21.5 36.2 21.5 36.2C21.5 36.2 20.8 28.5 17.9 25.3C15 22 8 21.2 8 21.2C8 21.2 15 20.4 17.9 17.2C20.8 13.9 21.5 6.2 21.5 6.2Z" fill="white"/>
+        </svg>
+      </div>
+      <div class="sim-brand-text">
+        <div class="t">{{ bankName || 'Simulación' }}</div>
+        <div class="s">Entrevista de práctica</div>
+      </div>
+    </div>
+
+    <div class="sim-progress-center" *ngIf="fase !== 'finished'">
+      <span class="sim-progress-label"><b>Pregunta {{ numeroPregunta }}</b> <span class="muted">de {{ totalPreguntas }}</span></span>
+      <div class="progress-track"><div class="progress-fill" [style.width.%]="progresoPct"></div></div>
+    </div>
+    <div class="sim-progress-center" *ngIf="fase === 'finished'">
+      <span class="sim-progress-label"><b>{{ totalPreguntas }}</b> <span class="muted">de {{ totalPreguntas }} completadas</span></span>
+      <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+    </div>
+
+    <button class="sim-exit" *ngIf="fase !== 'processing' && fase !== 'finished'" (click)="Salir()">
+      <span class="material-symbols-outlined">close</span>Salir
+    </button>
+    <span class="sim-exit-spacer" *ngIf="fase === 'processing' || fase === 'finished'"></span>
+  </div>
+
+  <div class="sim-card" [class.centered]="fase !== 'recording'">
+
+    <div class="avatar-holder">
+      <app-avatar-robot [estado]="estadoAvatar" [boca]="bocaActual"></app-avatar-robot>
+    </div>
+
+    <ng-container *ngIf="fase === 'loading'">
+      <div class="spinner"></div>
+      <div class="muted-text">Cargando tu simulación...</div>
+    </ng-container>
+
+    <ng-container *ngIf="fase === 'reading'">
+      <div class="state-tag"><span class="dot"></span>Hablando</div>
+      <div class="q-chip"><span class="material-symbols-outlined">help</span>Pregunta {{ numeroPregunta }}</div>
+      <div class="q-text">{{ preguntaActual }}</div>
+    </ng-container>
+
+    <ng-container *ngIf="fase === 'countdown'">
+      <div class="cd">{{ countdownNum }}</div>
+      <div class="cd-label">Prepárate, tu respuesta comenzará a grabarse</div>
+    </ng-container>
+
+    
+    <ng-container *ngIf="fase === 'recording'">
+        <div class="state-tag"><span class="dot"></span>Escuchando tu respuesta</div>
+        <div class="q-text small">{{ preguntaActual }}</div>
+        <div class="card-bottom">
+            <div class="mic-zone">
+                <button class="mic-btn active"><span class="material-symbols-outlined">mic</span></button>
+
+                <div class="mini-wave">
+                    <span class="b" *ngFor="let n of niveles" [style.height.%]="n * 100"></span>
+                </div>
+
+                <div class="mic-time">{{ formatoTiempo(tiempoSegundos) }} / 2:00</div>
+
+                <div class="controls">
+                    <button class="btn-ghost" (click)="Regrabar()">
+                    <span class="material-symbols-outlined">refresh</span>Regrabar
+                    </button>
+                    <button class="btn-solid" (click)="DetenerYEnviar()">
+                    <span class="material-symbols-outlined">send</span>Enviar respuesta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="fase === 'processing'">
+      <div class="state-tag"><span class="dot"></span>Analizando tu respuesta</div>
+      <div class="muted-text">Preparando la siguiente pregunta...</div>
+    </ng-container>
+
+    <ng-container *ngIf="fase === 'finished'">
+      <div class="q-text">¡Terminaste la simulación!</div>
+      <div class="muted-text" style="margin-top:8px;">Estamos analizando tus respuestas y preparando tu reporte.</div>
+      <div class="spinner" style="margin-top:24px;"></div>
+      <div class="redirect-hint">Te llevaremos a tu reporte en un momento...</div>
+    </ng-container>
+
+  </div>
+</div>

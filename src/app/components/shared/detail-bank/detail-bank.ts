@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { QuestionBankResponseDTO } from '../../../models/questionBankResponseDTO';
 
 @Component({
   selector: 'app-detail-bank',
@@ -6,4 +8,11 @@ import { Component } from '@angular/core';
   templateUrl: './detail-bank.html',
   styleUrl: './detail-bank.css',
 })
-export class DetailBank {}
+export class DetailBank {
+  constructor(@Inject(MAT_DIALOG_DATA) public bank: QuestionBankResponseDTO,
+              public dialogRef: MatDialogRef<DetailBank>) {}
+
+  Cerrar() {
+    this.dialogRef.close();
+  }
+}

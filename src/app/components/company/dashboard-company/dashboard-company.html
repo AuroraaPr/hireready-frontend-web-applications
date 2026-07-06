@@ -2,9 +2,214 @@
   <app-sidebar></app-sidebar>
   <div class="main-col">
     <app-topbar [breadcrumb]="'Dashboard'"></app-topbar>
+
     <div class="content">
-      
-        
+
+      <div class="page-header">
+        <div class="header-text">
+          <h1>Hola, {{ companyName }} 👋</h1>
+          <p class="lead">Resumen de uso y desempeño de tus bancos de preguntas en los últimos 30 días.</p>
+        </div>
+      </div>
+
+      <!-- loading -->
+      <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando métricas...</span>
+      </div>
+
+      <!-- sin datos -->
+      <div class="empty-state" *ngIf="!loading && data && !data.hasEnoughData">
+        <span class="material-symbols-outlined">bar_chart</span>
+        <h3>Aún no hay datos suficientes</h3>
+        <p>{{ data.message }}</p>
+        <button class="btn-primary" (click)="CrearNuevoBanco()">
+          <span>Crear nuevo banco</span>
+        </button>
+      </div>
+
+      <div class="dashboard-grid" *ngIf="!loading && data && data.hasEnoughData">
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Simulaciones totales</div>
+              <div class="kpi-value">{{ data.totalSimulations }}</div>
+            </div>
+            <div class="kpi-icon icon-a">
+              <span class="material-symbols-outlined">graphic_eq</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Score promedio general</div>
+              <div class="kpi-value">{{ data.averageOverallScore }}<span class="kpi-unit">/100</span></div>
+            </div>
+            <div class="kpi-icon icon-b">
+              <span class="material-symbols-outlined">stars</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Bancos activos</div>
+              <div class="kpi-value">{{ activeBanks }}<span class="kpi-unit">de {{ data.totalBanks }}</span></div>
+            </div>
+            <div class="kpi-icon icon-c">
+              <span class="material-symbols-outlined">description</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Postulantes alcanzados</div>
+              <div class="kpi-value">{{ totalApplicantsReached }}</div>
+            </div>
+            <div class="kpi-icon icon-d">
+              <span class="material-symbols-outlined">groups</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-row">
+
+          <div class="chart-card">
+            <div class="chart-title">Bancos más utilizados</div>
+            <div class="chart-sub">Por número de simulaciones realizadas</div>
+            <div class="bars-list" *ngIf="data.topUsedBanks.length > 0">
+              <div class="bar-item" *ngFor="let b of data.topUsedBanks">
+                <div class="bar-label" [title]="b.label">{{ b.label }}</div>
+                <div class="bar-track">
+                  <div class="bar-fill fill-green" [style.width.%]="(b.count / maxBankUsage) * 100"></div>
+                </div>
+                <div class="bar-value">{{ b.count }}</div>
+              </div>
+            </div>
+            <div class="chart-empty" *ngIf="data.topUsedBanks.length === 0">
+              Ninguno de tus bancos tiene simulaciones todavía.
+            </div>
+          </div>
+
+          <div class="side-col">
+
+            <div class="dim-card">
+              <div class="chart-title">Métricas de desempeño</div>
+              <div class="chart-sub">Promedio de las respuestas analizadas</div>
+              <div class="dim-row">
+                <div class="dim-item">
+                  <div class="dim-label">Claridad</div>
+                  <div class="dim-bar"><div class="dim-fill" [style.width.%]="data.averageClarity"></div></div>
+                  <div class="dim-value">{{ data.averageClarity }}</div>
+                </div>
+                <div class="dim-item">
+                  <div class="dim-label">Relevancia</div>
+                  <div class="dim-bar"><div class="dim-fill" [style.width.%]="data.averageRelevance"></div></div>
+                  <div class="dim-value">{{ data.averageRelevance }}</div>
+                </div>
+                <div class="dim-item">
+                  <div class="dim-label">Estructura</div>
+                  <div class="dim-bar"><div class="dim-fill" [style.width.%]="data.averageStructure"></div></div>
+                  <div class="dim-value">{{ data.averageStructure }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="warning-card" *ngIf="data.unusedBanks.length > 0">
+              <div class="warning-head">
+                <span class="material-symbols-outlined">warning</span>
+                <span class="warning-title">{{ data.unusedBanks.length }} banco(s) sin simulaciones</span>
+              </div>
+              <p class="warning-text">
+                No han sido usados en los últimos 30 días. Considera revisar su difusión o categorización.
+              </p>
+              <div class="warning-chips">
+                <span class="warning-chip" *ngFor="let name of data.unusedBanks">{{ name }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="two-col">
+
+          <div class="chart-card">
+            <div class="chart-title">Distribución por carrera</div>
+            <div class="chart-sub">Postulantes que usaron tus bancos · {{ totalApplicantsReached }} totales</div>
+            <div class="chart-wrap" *ngIf="careerData.length > 0">
+              <ngx-charts-pie-chart
+                [results]="careerData"
+                [scheme]="colorScheme"
+                [legend]="true"
+                [labels]="false"
+                [doughnut]="true"
+                [arcWidth]="0.35">
+              </ngx-charts-pie-chart>
+            </div>
+            <div class="chart-empty" *ngIf="careerData.length === 0">Sin datos.</div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Distribución por nivel de estudio</div>
+            <div class="chart-sub">Nivel académico de tus postulantes</div>
+            <div class="chart-wrap" *ngIf="levelData.length > 0">
+              <ngx-charts-bar-vertical
+                [results]="levelData"
+                [scheme]="colorScheme"
+                [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [roundEdges]="true">
+              </ngx-charts-bar-vertical>
+            </div>
+            <div class="chart-empty" *ngIf="levelData.length === 0">Sin datos.</div>
+          </div>
+
+        </div>
+
+        <div class="two-col">
+
+          <div class="chart-card">
+            <div class="chart-title">Universidades más frecuentes</div>
+            <div class="chart-sub">De los postulantes que usaron tus bancos</div>
+            <div class="bars-list" *ngIf="data.topUniversities.length > 0">
+              <div class="bar-item" *ngFor="let u of data.topUniversities">
+                <div class="bar-label" [title]="u.label">{{ u.label }}</div>
+                <div class="bar-track">
+                  <div class="bar-fill fill-blue" [style.width.%]="(u.count / maxUni) * 100"></div>
+                </div>
+                <div class="bar-value">{{ u.count }}</div>
+              </div>
+            </div>
+            <div class="chart-empty" *ngIf="data.topUniversities.length === 0">
+              Ningún postulante registró universidad.
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Preguntas con menor score promedio</div>
+            <div class="chart-sub">Posible oportunidad de revisar su enunciado o nivel</div>
+            <div class="q-list" *ngIf="data.lowestScoredQuestions.length > 0">
+              <div class="q-item" *ngFor="let q of data.lowestScoredQuestions; let i = index">
+                <div class="q-rank">{{ (i + 1) | number: '2.0-0' }}</div>
+                <div class="q-body">
+                  <div class="q-content">{{ q.questionContent }}</div>
+                  <div class="q-meta">{{ q.bankName }} · {{ q.responseCount }} respuesta(s)</div>
+                </div>
+                <div class="q-score" [ngClass]="scoreClass(q.averageScore)">{{ q.averageScore }}</div>
+              </div>
+            </div>
+            <div class="chart-empty" *ngIf="data.lowestScoredQuestions.length === 0">
+              Aún no hay respuestas analizadas.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

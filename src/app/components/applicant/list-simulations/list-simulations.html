@@ -1,1 +1,146 @@
-<p>list-simulations works!</p>
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+  <div class="main-col">
+    <app-topbar [breadcrumb]="'Simulaciones'"></app-topbar>
+
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Simulaciones disponibles</h1>
+        <p class="lead">Elige un banco y practica tu entrevista.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" placeholder="Buscar por nombre o empresa..."
+                 [(ngModel)]="searchText" (ngModelChange)="aplicarBusqueda()">
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn" [class.active]="filter === 'all'"
+                  (click)="CambiarFiltro('all')">Todas</button>
+          <button class="toggle-btn" [class.active]="filter === 'recommended'"
+                  (click)="CambiarFiltro('recommended')">Recomendadas para ti</button>
+        </div>
+      </div>
+
+      <!-- loading -->
+      <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando bancos...</span>
+      </div>
+
+      <!-- Sin data -->
+      <div class="empty-state" *ngIf="!loading && banks.length === 0">
+        <span class="material-symbols-outlined">search_off</span>
+        <h3>No hay bancos disponibles</h3>
+        <p *ngIf="filter === 'recommended'">No hay bancos recomendados para tu carrera. Prueba ver todos.</p>
+        <p *ngIf="filter === 'all'">Prueba ajustando el término de búsqueda.</p>
+      </div>
+
+
+      <div class="master-detail" [class.with-panel]="selectedBank" *ngIf="!loading && banks.length > 0">
+
+        <!-- cards -->
+        <div class="cards-list">
+          <div class="bank-row" *ngFor="let b of banks"
+               [class.selected]="selectedBank?.id === b.id"
+               (click)="SeleccionarBanco(b)">
+
+            <span class="corner-status corner-progress" *ngIf="b.status === 'IN_PROGRESS'">
+              <span class="dot"></span>En progreso
+            </span>
+            <span class="corner-status corner-done" *ngIf="b.status === 'COMPLETED'">
+              <span class="dot"></span>Completada
+            </span>
+
+            <div class="bank-main">
+              <div class="bank-toprow">
+                <span class="bank-company">{{ b.companyName }}</span>
+              </div>
+              <div class="bank-title">{{ b.name }}</div>
+              <div class="bank-desc">{{ b.description }}</div>
+              <div class="bank-tags">
+                <span class="meta-pill"><span class="material-symbols-outlined">work</span>{{ b.jobPosition }}</span>
+                <span class="meta-pill"><span class="material-symbols-outlined">signal_cellular_alt</span>{{ b.level }}</span>
+                <span class="chip" *ngFor="let career of b.careerNames">{{ career }}</span>
+              </div>
+            </div>
+            <div class="bank-side">
+              <div class="bank-stat">
+                <div class="bank-stat-value">{{ b.numQuestions }}</div>
+                <div class="bank-stat-label">preguntas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- panel de detalle -->
+        <div class="detail-panel" *ngIf="selectedBank">
+          <div class="panel-banner">
+            <img src="/avatar-banner.svg" alt="Avatar entrevistadora">
+          </div>
+
+          <div class="panel-eyebrow">Resumen de la simulación</div>
+          <div class="panel-company">{{ selectedBank.companyName }}</div>
+          <div class="panel-title">{{ selectedBank.name }}</div>
+          <div class="panel-desc">{{ selectedBank.description }}</div>
+
+          <!-- en progreso -->
+          <div class="panel-progress-note" *ngIf="bancoEnProgreso()">
+            <span class="material-symbols-outlined">info</span>
+            <span>Tienes esta simulación en progreso. Puedes continuar donde la dejaste.</span>
+          </div>
+
+          <div class="panel-info-grid">
+            <div class="panel-info-item">
+              <div class="panel-info-label">Puesto</div>
+              <div class="panel-info-value">{{ selectedBank.jobPosition }}</div>
+            </div>
+            <div class="panel-info-item">
+              <div class="panel-info-label">Nivel</div>
+              <div class="panel-info-value">{{ selectedBank.level }}</div>
+            </div>
+            <div class="panel-info-item">
+              <div class="panel-info-label">Preguntas</div>
+              <div class="panel-info-value">{{ selectedBank.numQuestions }}</div>
+            </div>
+            <div class="panel-info-item">
+              <div class="panel-info-label">Tiempo aprox</div>
+              <div class="panel-info-value">{{ tiempoEstimado(selectedBank.numQuestions) }} min</div>
+            </div>
+          </div>
+
+          <div class="panel-section-label" *ngIf="selectedBank.careerNames && selectedBank.careerNames.length > 0">Carreras objetivo</div>
+          <div class="panel-chips" *ngIf="selectedBank.careerNames && selectedBank.careerNames.length > 0">
+            <span class="chip" *ngFor="let career of selectedBank.careerNames">{{ career }}</span>
+          </div>
+
+          <!-- buttons -->
+          <ng-container *ngIf="bancoEnProgreso()">
+            <button class="btn-secondary" (click)="ContinuarSimulacion()" [disabled]="starting">
+                Continuar simulación
+            </button>
+            <button class="btn-primary" (click)="EmpezarDeNuevo()" [disabled]="starting">
+                {{ starting ? 'Iniciando...' : 'Empezar de nuevo' }}
+            </button>
+            </ng-container>
+
+            <ng-container *ngIf="bancoCompletado()">
+            <button class="btn-primary" (click)="IniciarSimulacion()" [disabled]="starting">
+                {{ starting ? 'Iniciando...' : 'Volver a practicar' }}
+            </button>
+            </ng-container>
+
+            <ng-container *ngIf="!bancoEnProgreso() && !bancoCompletado()">
+            <button class="btn-primary" (click)="IniciarSimulacion()" [disabled]="starting">
+                {{ starting ? 'Iniciando...' : 'Iniciar simulación' }}
+            </button>
+          </ng-container>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

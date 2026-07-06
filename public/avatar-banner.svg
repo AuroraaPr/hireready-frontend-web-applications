@@ -1,0 +1,44 @@
+<svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C9EBF7"/>
+      <stop offset="100%" stop-color="#A5D8EC"/>
+    </linearGradient>
+    <clipPath id="bannerClip"><rect width="400" height="180"/></clipPath>
+  </defs>
+  <rect width="400" height="180" fill="url(#bg)"/>
+  <g clip-path="url(#bannerClip)">
+    <circle cx="55" cy="45" r="28" fill="#FFFFFF" opacity="0.1"/>
+    <circle cx="345" cy="50" r="22" fill="#FFFFFF" opacity="0.1"/>
+    <circle cx="70" cy="150" r="18" fill="#FFFFFF" opacity="0.08"/>
+    <circle cx="330" cy="150" r="24" fill="#FFFFFF" opacity="0.08"/>
+
+    <!-- ROBOT: subido para mostrar cabeza completa, corta en torso bajo -->
+    <g transform="translate(200, 40) scale(1.05)">
+      <line x1="0" y1="-4" x2="0" y2="-16" stroke="#2C3444" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="0" cy="-20" r="5.5" fill="#2C3444"/>
+      <path d="M-54 46 Q-54 -2 0 -4 Q54 -2 54 46" fill="none" stroke="#2C3444" stroke-width="6" stroke-linecap="round"/>
+      <rect x="-66" y="38" width="17" height="28" rx="8" fill="#2C3444"/>
+      <rect x="49" y="38" width="17" height="28" rx="8" fill="#2C3444"/>
+      <path d="M-50 54 Q-50 0 0 0 Q50 0 50 54 Q50 90 0 94 Q-50 90 -50 54 Z" fill="#F4F6F8"/>
+      <path d="M-50 54 Q-50 0 0 0 Q50 0 50 54 Q50 62 46 66 Q42 22 0 18 Q-42 22 -46 66 Q-50 62 -50 54 Z" fill="#E2E7EC" opacity="0.5"/>
+      <path d="M-38 52 Q-38 16 0 16 Q38 16 38 52 Q38 74 0 78 Q-38 74 -38 52 Z" fill="#1A2634"/>
+      <ellipse cx="-12" cy="34" rx="13" ry="8" fill="#243441" opacity="0.6"/>
+      <path d="M-23 52 Q-16 44 -9 52" stroke="#5FD3F0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M9 52 Q16 44 23 52" stroke="#5FD3F0" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M-10 66 Q0 74 10 66" stroke="#5FD3F0" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M-60 62 Q-66 80 -42 84" fill="none" stroke="#2C3444" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="-38" cy="84" rx="6.5" ry="4.5" fill="#2C3444"/>
+      <rect x="-10" y="90" width="20" height="16" rx="6" fill="#3A3F4A"/>
+      <path d="M-34 118 Q-52 128 -51 155 L-38 155 Q-38 132 -22 124 Z" fill="#D8DEE5"/>
+      <path d="M34 118 Q52 128 51 155 L38 155 Q38 132 22 124 Z" fill="#D8DEE5"/>
+      <path d="M-42 165 L-42 118 Q-42 106 -28 105 L28 105 Q42 106 42 118 L42 165 Z" fill="#F4F6F8"/>
+      <circle cx="-40" cy="115" r="9" fill="#D8DEE5"/>
+      <circle cx="40" cy="115" r="9" fill="#D8DEE5"/>
+      <path d="M0 118 Q3.5 135 15 138 Q3.5 141 0 158 Q-3.5 141 -15 138 Q-3.5 135 0 118 Z" fill="#1A2634" opacity="0.9"/>
+      <path d="M0 105 L-16 99 L-16 111 Z" fill="#C25E7A"/>
+      <path d="M0 105 L16 99 L16 111 Z" fill="#C25E7A"/>
+      <rect x="-5" y="100" width="10" height="10" rx="2.5" fill="#A64A64"/>
+    </g>
+  </g>
+</svg>

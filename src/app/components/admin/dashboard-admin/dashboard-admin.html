@@ -1,10 +1,166 @@
 <div class="app-shell">
   <app-sidebar></app-sidebar>
   <div class="main-col">
-    <app-topbar [breadcrumb]="'Dashboard'"></app-topbar>
+    <app-topbar [breadcrumb]="'Dashboard administrativo'"></app-topbar>
+
     <div class="content">
-      
-        
+
+      <div class="page-header">
+        <div class="header-text">
+          <h1>Panel de administración</h1>
+          <p class="lead">Estado general del sistema · actividad y calidad de los últimos 30 días.</p>
+        </div>
+      </div>
+
+      <!-- loading -->
+      <div class="loading-state" *ngIf="loading">
+        <mat-spinner diameter="36"></mat-spinner>
+        <span>Cargando métricas...</span>
+      </div>
+
+      <!-- sin datos -->
+      <div class="empty-state" *ngIf="!loading && data && !data.hasEnoughData">
+        <span class="material-symbols-outlined">monitoring</span>
+        <h3>Aún no hay datos suficientes</h3>
+        <p>{{ data.message }}</p>
+      </div>
+
+      <div class="dashboard-grid" *ngIf="!loading && data && data.hasEnoughData">
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Usuarios totales</div>
+              <div class="kpi-value">{{ data.totalUsers }}</div>
+            </div>
+            <div class="kpi-icon icon-a">
+              <span class="material-symbols-outlined">group</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Postulantes</div>
+              <div class="kpi-value">{{ data.totalApplicants }}</div>
+            </div>
+            <div class="kpi-icon icon-b">
+              <span class="material-symbols-outlined">school</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Empresas</div>
+              <div class="kpi-value">{{ data.totalCompanies }}</div>
+            </div>
+            <div class="kpi-icon icon-c">
+              <span class="material-symbols-outlined">apartment</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+              <div class="kpi-label">Simulaciones totales</div>
+              <div class="kpi-value">{{ data.totalSimulations }}</div>
+            </div>
+            <div class="kpi-icon icon-d">
+              <span class="material-symbols-outlined">graphic_eq</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-body">
+                <div class="kpi-label">Score global</div>
+                <div class="kpi-value">
+                {{ data.averageGlobalScore !== null ? (data.averageGlobalScore | number: '1.0-1') : '—' }}<span class="kpi-unit">/100</span>
+                </div>
+            </div>
+            <div class="kpi-icon icon-e">
+                <span class="material-symbols-outlined">stars</span>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="chart-card">
+            <div class="chart-title">Simulaciones en el tiempo</div>
+            <div class="chart-sub">Actividad diaria de los últimos 30 días</div>
+            <div class="chart-wrap" *ngIf="simulationsData[0] && simulationsData[0].series.length > 0">
+              <ngx-charts-area-chart
+                [results]="simulationsData"
+                [scheme]="colorScheme"
+                [gradient]="gradient"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [legend]="showLegend"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel">
+              </ngx-charts-area-chart>
+            </div>
+            <div class="chart-empty" *ngIf="!simulationsData[0] || simulationsData[0].series.length === 0">
+              No hubo simulaciones en los últimos 30 días.
+            </div>
+        </div>
+
+
+        <div class="two-col">
+
+          <div class="chart-card">
+            <div class="chart-title">Distribución por carrera</div>
+            <div class="chart-sub">Todos los postulantes registrados</div>
+            <div class="chart-wrap" *ngIf="careerData.length > 0">
+              <ngx-charts-pie-chart
+                [results]="careerData"
+                [scheme]="colorScheme"
+                [legend]="true"
+                [labels]="false"
+                [doughnut]="true"
+                [arcWidth]="0.35">
+              </ngx-charts-pie-chart>
+            </div>
+            <div class="chart-empty" *ngIf="careerData.length === 0">Sin datos.</div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Distribución por nivel de estudio</div>
+            <div class="chart-sub">Nivel académico de los postulantes</div>
+            <div class="chart-wrap" *ngIf="levelData.length > 0">
+              <ngx-charts-bar-vertical
+                [results]="levelData"
+                [scheme]="colorScheme"
+                [gradient]="false"
+                [xAxis]="showXAxis"
+                [yAxis]="showYAxis"
+                [showXAxisLabel]="showXAxisLabel"
+                [showYAxisLabel]="showYAxisLabel"
+                [roundEdges]="true">
+              </ngx-charts-bar-vertical>
+            </div>
+            <div class="chart-empty" *ngIf="levelData.length === 0">Sin datos.</div>
+          </div>
+
+        </div>
+
+
+        <div class="chart-card">
+          <div class="chart-title">Bancos de preguntas por empresa</div>
+          <div class="chart-sub">Cuántos bancos ha publicado cada empresa</div>
+          <div class="bars-list" *ngIf="data.banksByCompany.length > 0">
+            <div class="bar-item" *ngFor="let b of data.banksByCompany">
+              <div class="bar-label" [title]="b.label">{{ b.label }}</div>
+              <div class="bar-track">
+                <div class="bar-fill fill-green" [style.width.%]="(b.count / maxBanksByCompany) * 100"></div>
+              </div>
+              <div class="bar-value">{{ b.count }}</div>
+            </div>
+          </div>
+          <div class="chart-empty" *ngIf="data.banksByCompany.length === 0">
+            Ninguna empresa ha publicado bancos todavía.
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>
