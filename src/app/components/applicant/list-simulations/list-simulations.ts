@@ -1,10 +1,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { QuestionBankSummaryResponseDTO } from '../../../models/questionBankSummaryResponseDTO';
-import { ContinueSimulationResponseDTO } from '../../../models/continueSimulationResponseDTO';
 import { QuestionBankService } from '../../../services/question-bank-service';
 import { SimulationService } from '../../../services/simulation-service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { SimulationResponseDTO } from '../../../models/simulationResponseDTO';
+import { filter } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-list-simulations',
@@ -22,9 +23,6 @@ export class ListSimulations {
   // banco selec
   selectedBank: QuestionBankSummaryResponseDTO | null = null;
 
-  // sim "IN_PROGRESS"
-  currentSimulation: ContinueSimulationResponseDTO | null = null;
-
   // filtros
   searchText: string = '';
   filter: string = 'all';
@@ -35,8 +33,15 @@ export class ListSimulations {
               private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.cargarSimulacionEnProgreso();
     this.cargarBancos();
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      if (event.url.includes('/applicant/simulations') && !event.url.includes('/run') && !event.url.includes('/report')) {
+        this.cargarBancos();
+      }
+    });
   }
 
   cargarBancos() {
@@ -51,23 +56,6 @@ export class ListSimulations {
       error: (err) => {
         console.log(err);
         this.loading = false;
-      }
-    });
-  }
-
-  cargarSimulacionEnProgreso() {
-    this.simulationService.getCurrent().subscribe({
-      next: (data: ContinueSimulationResponseDTO) => {
-        if (data && data.simulationId && data.status === 'IN_PROGRESS') {
-          this.currentSimulation = data;
-        } else {
-          this.currentSimulation = null;
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        this.currentSimulation = null;
-        this.cdr.detectChanges();
       }
     });
   }
@@ -117,12 +105,14 @@ export class ListSimulations {
 
     const request = {
       questionBankId: this.selectedBank.id,
-      confirmAbandonPrevious: this.currentSimulation !== null  // abandona
+      confirmAbandonPrevious: this.bancoEnProgreso()
     };
 
     this.simulationService.start(request).subscribe({
       next: (data: SimulationResponseDTO) => {
-        this.router.navigate(['/applicant/simulation', data.simulationId]);
+        this.router.navigate(['/applicant/simulations', data.simulationId, 'run'], {
+          queryParams: { bankId: this.selectedBank!.id }
+        });
       },
       error: (err) => {
         console.log(err);
@@ -130,9 +120,12 @@ export class ListSimulations {
       }
     });
   }
+
   ContinuarSimulacion() {
-    if (!this.currentSimulation) return;
-    this.router.navigate(['/applicant/simulation', this.currentSimulation.simulationId]);
+    if (!this.selectedBank) return;
+    this.router.navigate(['/applicant/simulations', 0, 'run'], {
+      queryParams: { bankId: this.selectedBank.id }
+    });
   }
 
   EmpezarDeNuevo() {

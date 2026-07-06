@@ -7,7 +7,6 @@ import { Sidebar } from './components/shared/sidebar/sidebar';
 import { Topbar } from './components/shared/topbar/topbar';
 import { EmptyState } from './components/shared/empty-state/empty-state';
 import { ScorePill } from './components/shared/score-pill/score-pill';
-import { AudioPlayer } from './components/shared/audio-player/audio-player';
 import { ConfirmarAccion } from './components/shared/confirmar-accion/confirmar-accion';
 import { Login } from './components/auth/login/login';
 import { RegisterApplicant } from './components/auth/register-applicant/register-applicant';
@@ -34,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { autorizacionInterceptor } from './interceptors/autorizacion-interceptor';
 import { DetailBank } from './components/shared/detail-bank/detail-bank';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { AvatarRobot } from './components/shared/avatar-robot/avatar-robot';
 
 @NgModule({
   declarations: [
@@ -42,7 +42,6 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     Topbar,
     EmptyState,
     ScorePill,
-    AudioPlayer,
     ConfirmarAccion,
     Login,
     RegisterApplicant,
@@ -63,6 +62,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     ListBanksAdmin,
     ListCareers,
     DetailBank,
+    AvatarRobot,
   ],
   imports: [
     BrowserModule,

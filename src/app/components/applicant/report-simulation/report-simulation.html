@@ -1,1 +1,138 @@
-<p>report-simulation works!</p>
+<div class="rep-page">
+  <div class="container">
+
+    <!-- loading -->
+    <div class="rep-loading" *ngIf="cargando">
+      <div class="spinner"></div>
+      <span>Cargando tu reporte...</span>
+    </div>
+
+    <ng-container *ngIf="!cargando && reporte">
+
+      <div class="rep-topbar">
+        <button class="btn-back-arrow" (click)="Volver()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="topbar-titles">
+          <div class="topbar-eyebrow">Reporte de simulación</div>
+          <div class="topbar-title">{{ reporte.bankName }}</div>
+          <div class="topbar-sub">
+            {{ reporte.companyName }} · {{ fechaLegible(reporte.completedAt) }}
+            · {{ reporte.responses.length }} preguntas · {{ duracionTotalMin() }} min
+          </div>
+        </div>
+      </div>
+
+      <!-- score -->
+      <div class="score-card">
+        <div class="score-ring">
+          <svg width="150" height="150">
+            <circle cx="75" cy="75" r="66" fill="none" stroke="#E5E9F0" stroke-width="12"/>
+            <circle cx="75" cy="75" r="66" fill="none" stroke="#1B6E5E" stroke-width="12" stroke-linecap="round"
+                    [attr.stroke-dasharray]="RING_CIRC"
+                    [attr.stroke-dashoffset]="ringOffset(reporte.overallScore)"/>
+          </svg>
+          <div class="score-ring-center">
+            <div class="score-ring-value">{{ reporte.overallScore }}</div>
+            <div class="score-ring-max">de 100</div>
+          </div>
+        </div>
+        <div class="score-ring-label">Puntaje general</div>
+      </div>
+
+      <!-- métricas -->
+      <div class="metrics-card">
+        <div class="card-title">Métricas promedio</div>
+        <div class="card-sub">Por respuesta · toda la simulación</div>
+        <div class="dim-row">
+          <div class="dim-item">
+            <div class="dim-label">Relevancia</div>
+            <div class="dim-bar"><div class="dim-fill" [style.width.%]="reporte.avgRelevance"></div></div>
+            <div class="dim-value">{{ reporte.avgRelevance }}</div>
+          </div>
+          <div class="dim-item">
+            <div class="dim-label">Claridad</div>
+            <div class="dim-bar"><div class="dim-fill" [style.width.%]="reporte.avgClarity"></div></div>
+            <div class="dim-value">{{ reporte.avgClarity }}</div>
+          </div>
+          <div class="dim-item">
+            <div class="dim-label">Estructura</div>
+            <div class="dim-bar"><div class="dim-fill" [style.width.%]="reporte.avgStructure"></div></div>
+            <div class="dim-value">{{ reporte.avgStructure }}</div>
+          </div>
+        </div>
+        <div class="wpm-item">
+          <div>
+            <div class="wpm-left">Palabras por minuto</div>
+            <div class="wpm-hint">Ritmo ideal: 120–150 ppm</div>
+          </div>
+          <div class="wpm-val">{{ reporte.wordsPerMinute }}</div>
+        </div>
+      </div>
+
+      <!-- Muletillas -->
+      <div class="fillers-card">
+        <div class="card-title">Muletillas detectadas</div>
+        <div class="card-sub">Las palabras que más repites en tus respuestas</div>
+        <div class="filler-list" *ngIf="reporte.fillerWords.length > 0">
+          <div class="filler-item" *ngFor="let fw of reporte.fillerWords">
+            <span class="filler-word">"{{ fw.word }}"</span>
+            <span class="filler-count">{{ fw.count }} veces</span>
+          </div>
+        </div>
+        <div class="fillers-empty" *ngIf="reporte.fillerWords.length === 0">
+          <span class="material-symbols-outlined">check_circle</span>
+          No se detectaron muletillas. ¡Excelente fluidez!
+        </div>
+      </div>
+
+      <!-- Detalle -->
+      <div class="q-section-label">Detalle por pregunta</div>
+
+      <div class="q-card" *ngFor="let resp of reporte.responses">
+        <div class="q-num">Pregunta {{ (resp.orderIndex + 1) | number: '2.0-0' }}</div>
+        <div class="q-question">{{ resp.questionContent }}</div>
+
+        <!-- respuesta play -->
+        <div class="q-answer-row">
+          <div class="q-transcription">
+            <span class="q-transcription-text">{{ resp.transcription }}</span>
+            <button class="q-play"
+                    [class.playing]="reproduciendoId === resp.responseId"
+                    (click)="Reproducir(resp)"
+                    [disabled]="cargandoAudioId === resp.responseId">
+              <span class="material-symbols-outlined" *ngIf="cargandoAudioId !== resp.responseId">
+                {{ reproduciendoId === resp.responseId ? 'pause' : 'play_arrow' }}
+              </span>
+              <span class="material-symbols-outlined spin-icon" *ngIf="cargandoAudioId === resp.responseId">progress_activity</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- feedback -->
+        <div class="q-feedback-label"><span class="material-symbols-outlined">lightbulb</span>Feedback</div>
+        <div class="q-feedback">{{ parsearFeedback(resp.feedback) }}</div>
+
+        <!-- scores -->
+        <div class="q-metrics">
+          <div class="q-metric">
+            <div class="q-metric-label">Relevancia</div>
+            <div class="q-metric-bar"><div class="q-metric-fill" [style.width.%]="resp.relevanceScore"></div></div>
+            <div class="q-metric-val">{{ resp.relevanceScore }}</div>
+          </div>
+          <div class="q-metric">
+            <div class="q-metric-label">Claridad</div>
+            <div class="q-metric-bar"><div class="q-metric-fill" [style.width.%]="resp.clarityScore"></div></div>
+            <div class="q-metric-val">{{ resp.clarityScore }}</div>
+          </div>
+          <div class="q-metric">
+            <div class="q-metric-label">Estructura</div>
+            <div class="q-metric-bar"><div class="q-metric-fill" [style.width.%]="resp.structureScore"></div></div>
+            <div class="q-metric-val">{{ resp.structureScore }}</div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </div>
+</div>

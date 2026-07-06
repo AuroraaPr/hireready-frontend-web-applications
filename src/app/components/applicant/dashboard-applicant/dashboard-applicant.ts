@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
   styleUrl: './dashboard-applicant.css',
 })
 export class DashboardApplicant {
-  
+
   loading: boolean = true;
   data!: ApplicantDashboardResponseDTO;
   userName: string = '';
@@ -64,8 +64,8 @@ export class DashboardApplicant {
     if (!data.hasEnoughData) return;
 
     const points: ChartPointSingle[] = [];
-    data.scoreOverTime.forEach((p: ScoreTimePointDTO) => {
-      const label = this.formatFecha(p.completedAt);
+    data.scoreOverTime.forEach((p: ScoreTimePointDTO, index: number) => {
+      const label = 'Sim ' + (index + 1);
       const chartPoint: ChartPointSingle = {
         name: label,
         value: p.overallScore,
@@ -78,13 +78,6 @@ export class DashboardApplicant {
     const serie: ChartSerie = { name: 'Score', series: points };
     this.scoreOverTimeData = [serie];
     this.scoreOverTimeData = this.scoreOverTimeData.slice();
-  }
-
-  formatFecha(formatIni: string): string {
-    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun',
-                   'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-    const d = new Date(formatIni);
-    return d.getDate() + ' ' + meses[d.getMonth()];
   }
 
   tooltipTexto(model: any): string {

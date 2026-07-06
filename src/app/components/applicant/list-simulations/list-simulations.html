@@ -78,9 +78,7 @@
         <!-- panel de detalle -->
         <div class="detail-panel" *ngIf="selectedBank">
           <div class="panel-banner">
-            <img src="/avatar-idle.png" alt="Avatar entrevistadora"
-                 onerror="this.style.display='none'; this.parentElement.classList.add('banner-fallback');">
-            <span class="banner-fallback-text">Tu entrevistadora</span>
+            <img src="/avatar-banner.svg" alt="Avatar entrevistadora">
           </div>
 
           <div class="panel-eyebrow">Resumen de la simulación</div>
@@ -89,9 +87,9 @@
           <div class="panel-desc">{{ selectedBank.description }}</div>
 
           <!-- en progreso -->
-          <div class="panel-progress-note" *ngIf="bancoEnProgreso() && currentSimulation">
+          <div class="panel-progress-note" *ngIf="bancoEnProgreso()">
             <span class="material-symbols-outlined">info</span>
-            <span>Tienes esta simulación en progreso ({{ currentSimulation.answeredQuestions }} de {{ currentSimulation.totalQuestions }} respondidas).</span>
+            <span>Tienes esta simulación en progreso. Puedes continuar donde la dejaste.</span>
           </div>
 
           <div class="panel-info-grid">
