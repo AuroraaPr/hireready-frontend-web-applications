@@ -23,6 +23,7 @@ export class DashboardApplicant {
   scoreOverTimeData: ChartSerie[] = [];
 
   bankByPoint: { [key: string]: string } = {};
+  fechaByPoint: { [key: string]: string } = {};
 
 
   colorScheme: any = {
@@ -73,6 +74,7 @@ export class DashboardApplicant {
       points.push(chartPoint);
       if (p.bankName) {
         this.bankByPoint[label] = p.bankName;
+        this.fechaByPoint[label] = this.formatFechaHora(p.completedAt);
       }
     });
     const serie: ChartSerie = { name: 'Score', series: points };
@@ -80,12 +82,28 @@ export class DashboardApplicant {
     this.scoreOverTimeData = this.scoreOverTimeData.slice();
   }
 
+  formatFechaHora(iso: string): string {
+    if (!iso) return '';
+    const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun',
+                  'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    const d = new Date(iso);
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear() + ', ' + hh + ':' + mm;
+  }
+
   tooltipTexto(model: any): string {
     const banco = this.bankByPoint[model.name];
+    const fecha = this.fechaByPoint[model.name];
+    let texto = '';
     if (banco) {
-      return banco + ' · Score ' + model.value;
+      texto += banco + ' · ';
     }
-    return 'Score ' + model.value;
+    texto += 'Score ' + model.value;
+    if (fecha) {
+      texto += ' · ' + fecha;
+    }
+    return texto;
   }
 
   IniciarNuevaSimulacion() {
