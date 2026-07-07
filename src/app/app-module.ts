@@ -5,8 +5,6 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Sidebar } from './components/shared/sidebar/sidebar';
 import { Topbar } from './components/shared/topbar/topbar';
-import { EmptyState } from './components/shared/empty-state/empty-state';
-import { ScorePill } from './components/shared/score-pill/score-pill';
 import { ConfirmarAccion } from './components/shared/confirmar-accion/confirmar-accion';
 import { Login } from './components/auth/login/login';
 import { RegisterApplicant } from './components/auth/register-applicant/register-applicant';
@@ -41,8 +39,6 @@ import { AvatarRobot } from './components/shared/avatar-robot/avatar-robot';
     App,
     Sidebar,
     Topbar,
-    EmptyState,
-    ScorePill,
     ConfirmarAccion,
     Login,
     RegisterApplicant,

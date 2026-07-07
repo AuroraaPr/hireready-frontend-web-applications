@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -18,7 +18,6 @@ import { CompanyService } from '../../../services/company-service';
 import { CareerResponseDTO } from '../../../models/careerResponseDTO';
 import { CreateQuestionBankRequestDTO } from '../../../models/createQuestionBankRequestDTO';
 import { LevelOption } from '../../../models/levelOption';
-import { ModalityOption } from '../../../models/modalityOption';
  
 function minSelectionValidator(min: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -59,12 +58,6 @@ export class SaveBankCompany implements OnInit {
     { value: 'Senior', label: 'Senior' },
   ];
  
-  readonly modalities: ModalityOption[] = [
-    { value: 'TECHNICAL', label: 'Técnica' },
-    { value: 'BEHAVIORAL', label: 'Competencias' },
-    { value: 'MIXED', label: 'Mixta (técnica + competencias)' },
-  ];
- 
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -72,6 +65,7 @@ export class SaveBankCompany implements OnInit {
     private questionBankService: QuestionBankService,
     private careerService: CareerService,
     private companyService: CompanyService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +78,6 @@ export class SaveBankCompany implements OnInit {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(120)]],
       jobPosition: ['', [Validators.required, Validators.maxLength(120)]],
-      modality: ['MIXED'],
       description: ['', [Validators.required, Validators.maxLength(this.descriptionMaxLength)]],
       level: ['Junior', Validators.required],
       careerIds: this.fb.control<number[]>([], [minSelectionValidator(1)]),
@@ -135,10 +128,12 @@ export class SaveBankCompany implements OnInit {
       next: (data) => {
         this.allCareers = data;
         this.loadingCareers = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loadingCareers = false;
         this.errorCareers = true;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -147,9 +142,10 @@ export class SaveBankCompany implements OnInit {
     this.companyService.getMe().subscribe({
       next: (data) => {
         this.companyName = data.name;
+        this.cdr.detectChanges();
       },
       error: () => {
-        // si falla, la vista previa igual funciona mostrando "Tu empresa"
+
       },
     });
   }
@@ -176,12 +172,35 @@ export class SaveBankCompany implements OnInit {
   }
   
   addQuestion(): void {
+    const hayVacia = this.questionsArray.controls.some(
+      (c) => ((c.value as string) || '').trim().length === 0
+    );
+    if (hayVacia) {
+      const idxVacia = this.questionsArray.controls.findIndex(
+        (c) => ((c.value as string) || '').trim().length === 0
+      );
+      this.editingIndex = idxVacia;
+      this.snackBar.open('Completa la pregunta vacía antes de agregar otra.', 'Cerrar', {
+        duration: 3000,
+        panelClass: 'snackbar-error',
+      });
+      return;
+    }
     const control = new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(500)],
     });
     this.questionsArray.push(control);
     this.editingIndex = this.questionsArray.length - 1;
+  }
+
+  get tiempoEstimado(): number {
+    return Math.max(1, Math.round(this.questionsArray.length * 2.5));
+  }
+
+  esPreguntaVacia(index: number): boolean {
+    const c = this.questionsArray.at(index);
+    return ((c?.value as string) || '').trim().length === 0;
   }
  
   editQuestion(index: number): void {
@@ -234,6 +253,12 @@ export class SaveBankCompany implements OnInit {
   get hasAtLeastOneQuestion(): boolean {
     return this.questionsArray.length > 0;
   }
+
+  get allQuestionsHaveContent(): boolean {
+    return this.questionsArray.controls.every(
+      (c) => ((c.value as string) || '').trim().length > 0
+    );
+  }
  
   get canPublish(): boolean {
     return (
@@ -243,16 +268,9 @@ export class SaveBankCompany implements OnInit {
       this.hasLevel &&
       this.hasAtLeastOneCareer &&
       this.hasAtLeastOneQuestion &&
+      this.allQuestionsHaveContent &&
       !this.saving
     );
-  }
-  
-  get previewInitials(): string {
-    const raw = ((this.nameControl.value as string) || '').trim();
-    const parts = raw.split(/\s+/).filter((p) => p.length > 0);
-    if (parts.length === 0) return '··';
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
   }
  
   cancel(): void {
@@ -265,7 +283,10 @@ export class SaveBankCompany implements OnInit {
     this.questionsArray.controls.forEach((c) => c.markAsTouched());
  
     if (!this.canPublish) {
-      this.snackBar.open('Completa los campos requeridos antes de publicar el banco.', 'Cerrar', {
+      const msg = this.hasAtLeastOneQuestion && !this.allQuestionsHaveContent
+        ? 'Hay preguntas vacías. Escribe el contenido de cada pregunta o elimínala.'
+        : 'Completa los campos requeridos antes de publicar el banco.';
+      this.snackBar.open(msg, 'Cerrar', {
         duration: 3500,
         panelClass: 'snackbar-error',
       });

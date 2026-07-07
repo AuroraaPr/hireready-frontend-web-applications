@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { CompanyService } from '../../../services/company-service';
@@ -42,6 +42,7 @@ export class ListCompanies implements OnInit {
     private userService: UserService,
     private questionBankService: QuestionBankService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -52,8 +53,6 @@ export class ListCompanies implements OnInit {
     this.loading = true;
     this.error = false;
 
-    // combinamos /admin/companies con /admin/question-banks para derivar
-    // "simulaciones generadas" por empresa, sin agregar nada al backend.
     forkJoin({
       companies: this.companyService.listAll(),
       banks: this.questionBankService.listForAdmin(),
@@ -71,10 +70,12 @@ export class ListCompanies implements OnInit {
         }));
         this.applyFilters();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.error = true;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -202,6 +203,7 @@ export class ListCompanies implements OnInit {
         this.applyFilters();
         this.modalVisible = false;
         this.selected = null;
+        this.cdr.detectChanges();
         this.snackBar.open(
           this.modalAction === 'deactivate' ? 'Empresa desactivada' : 'Empresa reactivada',
           'Cerrar',

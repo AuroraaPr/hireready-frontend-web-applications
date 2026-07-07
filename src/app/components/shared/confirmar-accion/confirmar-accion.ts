@@ -60,11 +60,11 @@ export class ConfirmarAccion implements OnChanges {
   get descripcion(): string {
     if (this.esDesactivar) {
       return this.esPostulante
-        ? 'Esta acción bloquea el acceso del postulante al sistema y oculta inmediatamente su perfil de las empresas. Su historial de simulaciones se conservará.'
+        ? 'Esta acción bloquea el acceso del postulante al sistema: no podrá iniciar sesión. Su historial de simulaciones se conservará.'
         : 'Esta acción bloquea el acceso de la empresa al sistema y oculta inmediatamente sus bancos de preguntas para todos los postulantes. Las simulaciones ya completadas se conservarán como histórico.';
     }
     return this.esPostulante
-      ? 'La cuenta del postulante volverá a estar activa y su perfil será visible nuevamente para las empresas.'
+      ? 'La cuenta del postulante volverá a estar activa y podrá iniciar sesión nuevamente.'
       : 'La cuenta de la empresa volverá a estar activa y sus bancos de preguntas se mostrarán nuevamente a los postulantes.';
   }
 
@@ -73,7 +73,6 @@ export class ConfirmarAccion implements OnChanges {
       if (this.esPostulante) {
         return [
           'El postulante no podrá iniciar sesión',
-          'Su perfil dejará de mostrarse a las empresas',
           `Su${this.relatedCount === 1 ? '' : 's'} ${this.relatedCount} simulación${this.relatedCount === 1 ? '' : 'es'} se conservará${this.relatedCount === 1 ? '' : 'n'} como histórico`,
           'Podrás reactivar la cuenta más adelante',
         ];
@@ -88,7 +87,6 @@ export class ConfirmarAccion implements OnChanges {
     if (this.esPostulante) {
       return [
         'El postulante podrá iniciar sesión nuevamente',
-        'Su perfil volverá a estar visible para las empresas',
         'Podrá continuar generando simulaciones',
       ];
     }

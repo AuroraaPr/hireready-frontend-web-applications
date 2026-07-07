@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { UserService } from '../../../services/user-service';
 import { AuthorityRole } from '../../../models/authorityRole';
 
@@ -8,20 +9,33 @@ import { AuthorityRole } from '../../../models/authorityRole';
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
-export class Topbar {
+export class Topbar implements OnInit, OnDestroy {
   @Input() breadcrumb: string = '';
 
   userName: string = '';
   userRole: string = '';
   userInitials: string = '';
 
-  constructor(private userService: UserService) {}
+  private nameSub?: Subscription;
+
+  constructor(
+    private userService: UserService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     const role = this.userService.getRoleLogeado();
-    this.userName = this.userService.getNameLogeado() || 'Usuario';
     this.userRole = this.roleLabel(role);
-    this.userInitials = this.computeInitials(this.userName);
+
+    this.nameSub = this.userService.name$.subscribe((name) => {
+      this.userName = name || 'Usuario';
+      this.userInitials = this.computeInitials(this.userName);
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy() {
+    this.nameSub?.unsubscribe();
   }
 
   roleLabel(role: AuthorityRole | null): string {

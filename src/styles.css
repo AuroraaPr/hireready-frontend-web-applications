@@ -101,3 +101,28 @@ html, body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.mat-mdc-select-panel {
+  background: var(--hr-surface) !important;
+  border: 1px solid var(--hr-divider) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--hr-shadow-hover) !important;
+  padding: 6px !important;
+}
+.mat-mdc-option {
+  border-radius: 7px !important;
+  font-size: 13px !important;
+  min-height: 40px !important;
+}
+.mat-mdc-option:hover:not(.mdc-list-item--disabled) {
+  background: var(--hr-primary-soft) !important;
+}
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+  background: var(--hr-primary-soft) !important;
+}
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: var(--hr-text) !important;
+}
+.mat-mdc-option .mat-pseudo-checkbox-checked {
+  color: var(--hr-primary) !important;
+}

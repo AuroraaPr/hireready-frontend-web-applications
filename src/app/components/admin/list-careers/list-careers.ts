@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CareerService } from '../../../services/career-service';
 import { CareerResponseDTO } from '../../../models/careerResponseDTO';
@@ -26,6 +26,7 @@ export class ListCareers implements OnInit {
   constructor(
     private careerService: CareerService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -40,10 +41,12 @@ export class ListCareers implements OnInit {
         this.careers = data;
         this.applySort();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.error = true;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -79,6 +82,7 @@ export class ListCareers implements OnInit {
         this.applySort();
         this.newCareerName = '';
         this.saving = false;
+        this.cdr.detectChanges();
         this.snackBar.open('Carrera agregada correctamente', 'Cerrar', {
           duration: 3000,
           panelClass: 'snackbar-success',
@@ -121,6 +125,7 @@ export class ListCareers implements OnInit {
         this.applySort();
         this.saving = false;
         this.cancelEdit();
+        this.cdr.detectChanges();
         this.snackBar.open('Carrera actualizada correctamente', 'Cerrar', {
           duration: 3000,
           panelClass: 'snackbar-success',

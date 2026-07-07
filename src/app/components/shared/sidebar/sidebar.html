@@ -15,6 +15,7 @@
     <a *ngFor="let item of items"
        [routerLink]="item.route"
        routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
        class="nav-item">
       <span class="material-symbols-outlined">{{ item.icon }}</span>
       <span class="label">{{ item.label }}</span>

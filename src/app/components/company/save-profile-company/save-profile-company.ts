@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CompanyService } from '../../../services/company-service';
 import { DashboardService } from '../../../services/dashboard-service';
+import { UserService } from '../../../services/user-service';
 import { CompanyResponseDTO } from '../../../models/companyResponseDTO';
 import { CompanyUpdateDTO } from '../../../models/companyUpdateDTO';
 import { CompanyDashboardResponseDTO } from '../../../models/companyDashboardResponseDTO';
@@ -21,6 +22,8 @@ export class SaveProfileCompany implements OnInit {
     description: '',
   };
 
+  displayName: string = '';
+
   totalBanks: number = 0;
   loading: boolean = true;
   saving: boolean = false;
@@ -29,10 +32,13 @@ export class SaveProfileCompany implements OnInit {
   constructor(
     private companyService: CompanyService,
     private dashboardService: DashboardService,
+    private userService: UserService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.displayName = this.userService.getNameLogeado() || '';
     this.loadProfile();
     this.loadDashboard();
   }
@@ -41,11 +47,15 @@ export class SaveProfileCompany implements OnInit {
     this.companyService.getMe().subscribe({
       next: (response) => {
         this.company = response as CompanyResponseDTO;
+
+        if (!this.displayName) this.displayName = this.company.name;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.showError('No se pudo cargar el perfil de empresa.');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -55,9 +65,11 @@ export class SaveProfileCompany implements OnInit {
       next: (response) => {
         const data = response as CompanyDashboardResponseDTO;
         this.totalBanks = data.totalBanks || 0;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.totalBanks = 0;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -86,16 +98,25 @@ export class SaveProfileCompany implements OnInit {
     this.saving = true;
     this.saved = false;
 
+    console.log('[perfil empresa] enviando update:', dto);
+
     this.companyService.updateMe(dto).subscribe({
-      next: () => {
-        localStorage.setItem('name', dto.name);
+      next: (response) => {
+        console.log('[perfil empresa] respuesta OK:', response);
+
+        this.company = response as CompanyResponseDTO;
+        this.userService.setNameLogeado(dto.name);
+        this.displayName = dto.name;
         this.saving = false;
         this.saved = true;
         this.showSuccess('Cambios guardados.');
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('[perfil empresa] error al guardar:', err);
         this.saving = false;
         this.showError('No se pudieron guardar los cambios.');
+        this.cdr.detectChanges();
       },
     });
   }
@@ -106,8 +127,8 @@ export class SaveProfileCompany implements OnInit {
   }
 
   get initials(): string {
-    const parts = this.company.name.split(' ').filter((part) => part.length > 0);
-    if (parts.length === 0) return 'RP';
+    const parts = this.displayName.split(' ').filter((part) => part.length > 0);
+    if (parts.length === 0) return '·';
     if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }

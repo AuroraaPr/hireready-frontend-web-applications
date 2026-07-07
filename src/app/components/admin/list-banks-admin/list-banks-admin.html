@@ -25,6 +25,11 @@
           <option value="">Todos los niveles</option>
           <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
         </select>
+        <select class="filter-select" [(ngModel)]="selectedCompanyStatus" (ngModelChange)="aplicarFiltros()">
+          <option value="">Empresas activas e inactivas</option>
+          <option value="active">Solo empresas activas</option>
+          <option value="inactive">Solo empresas inactivas</option>
+        </select>
       </div>
 
       <!-- loading -->

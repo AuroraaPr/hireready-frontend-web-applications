@@ -2,7 +2,7 @@
   <app-sidebar></app-sidebar>
 
   <div class="main-col">
-    <app-topbar [breadcrumb]="'Inicio · Mi perfil'"></app-topbar>
+    <app-topbar [breadcrumb]="'Mi perfil'"></app-topbar>
 
     <main class="profile-page">
       <section class="page-header">
@@ -13,7 +13,7 @@
       <section class="profile-grid" *ngIf="!loading; else loadingTemplate">
         <article class="summary-card">
           <div class="big-avatar">{{ initials }}</div>
-          <h2>{{ profile.name }}</h2>
+          <h2>{{ displayName }}</h2>
           <p>Postulante</p>
 
           <div class="divider"></div>
@@ -57,7 +57,7 @@
             <div class="form-row">
               <div class="form-group">
                 <label>Fecha de nacimiento <b>*</b></label>
-                <input type="text" name="bornDate" placeholder="dd/mm/aaaa" [(ngModel)]="birthDateView" />
+                <input type="text" name="bornDate" placeholder="dd/mm/aaaa" [ngModel]="birthDateView" (input)="onBornDateInput($any($event.target).value)" />
               </div>
 
               <div class="form-group">
@@ -78,9 +78,35 @@
                 </select>
               </div>
 
-              <div class="form-group">
+              <div class="form-group university-field">
                 <label>Universidad</label>
-                <input type="text" name="university" [(ngModel)]="profile.university" />
+                <input
+                  type="text"
+                  name="university"
+                  autocomplete="off"
+                  [ngModel]="profile.university"
+                  (ngModelChange)="profile.university = $event"
+                  (input)="onUniversityInput($any($event.target).value)"
+                  (blur)="onUniversityBlur()"
+                />
+                <div class="university-panel" *ngIf="searchingUniversity || universitySuggestions.length > 0">
+                  <div class="university-loading" *ngIf="searchingUniversity">
+                    <span class="material-symbols-outlined spin">progress_activity</span>
+                    Buscando...
+                  </div>
+                  <ng-container *ngIf="!searchingUniversity">
+                    <button
+                      type="button"
+                      class="university-option"
+                      *ngFor="let u of universitySuggestions"
+                      (mousedown)="selectUniversity(u)"
+                    >
+                      <span class="material-symbols-outlined">school</span>
+                      <span class="university-name">{{ u.name }}</span>
+                    </button>
+                    <div class="university-hint">Universidades licenciadas en Perú</div>
+                  </ng-container>
+                </div>
               </div>
             </div>
 

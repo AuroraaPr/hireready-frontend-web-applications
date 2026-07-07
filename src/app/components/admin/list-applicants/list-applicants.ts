@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApplicantService } from '../../../services/applicant-service';
 import { UserService } from '../../../services/user-service';
@@ -35,6 +35,7 @@ export class ListApplicants implements OnInit {
     private applicantService: ApplicantService,
     private userService: UserService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -49,10 +50,12 @@ export class ListApplicants implements OnInit {
         this.applicants = data;
         this.applyFilters();
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
         this.error = true;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -125,8 +128,6 @@ export class ListApplicants implements OnInit {
     this.page = p;
   }
 
-  // genera los números de página a mostrar como bloques, con "..." cuando hay muchas páginas
-  // ej: 1 2 3 ... 8  |  1 ... 4 5 6 ... 12
   get pageNumbers(): (number | string)[] {
     const total = this.totalPages;
     const current = this.page;
@@ -184,6 +185,7 @@ export class ListApplicants implements OnInit {
         this.applyFilters();
         this.modalVisible = false;
         this.selected = null;
+        this.cdr.detectChanges();
         this.snackBar.open(
           this.modalAction === 'deactivate' ? 'Postulante desactivado' : 'Postulante reactivado',
           'Cerrar',

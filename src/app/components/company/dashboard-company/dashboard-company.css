@@ -36,10 +36,12 @@
   text-align: center;
   box-shadow: var(--hr-shadow-card);
 }
-.empty-state .material-symbols-outlined {
-  font-size: 56px;
-  color: var(--hr-primary);
-  margin-bottom: 14px;
+.empty-robot {
+  width: 220px;
+  max-width: 70%;
+  height: auto;
+  margin: 0 auto 18px;
+  display: block;
 }
 .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
 .empty-state p { font-size: 14px; color: var(--hr-text-muted); margin-bottom: 22px; }

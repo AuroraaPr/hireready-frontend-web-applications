@@ -102,6 +102,6 @@ export class DashboardCompany {
   }
 
   CrearNuevoBanco() {
-    this.router.navigate(['/company/save-bank-company']);
+    this.router.navigate(['/company/banks/new']);
   }
 }

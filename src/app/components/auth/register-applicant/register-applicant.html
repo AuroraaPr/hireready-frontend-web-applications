@@ -42,23 +42,25 @@
         <div class="field-row">
           <mat-form-field appearance="outline" class="field half">
             <mat-label>Correo</mat-label>
+            <span matPrefix class="material-symbols-outlined field-prefix">mail</span>
             <input
               matInput
               type="email"
               formControlName="email"
-              placeholder="tucorreo@email.com"
               autocomplete="off"
               (input)="clearFeedback()"
             >
+            <mat-error *ngIf="emailControl.hasError('required')">El correo es obligatorio</mat-error>
+            <mat-error *ngIf="emailControl.hasError('email')">Ingresa un correo válido</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="field half">
             <mat-label>Contraseña</mat-label>
+            <span matPrefix class="material-symbols-outlined field-prefix">lock</span>
             <input
               matInput
               [type]="hidePassword ? 'password' : 'text'"
               formControlName="password"
-              placeholder="Mínimo 8 caracteres"
               autocomplete="new-password"
               (input)="clearFeedback()"
             >
@@ -71,6 +73,8 @@
             >
               <span class="material-symbols-outlined">{{ hidePassword ? 'visibility' : 'visibility_off' }}</span>
             </button>
+            <mat-error *ngIf="passwordControl.hasError('required')">La contraseña es obligatoria</mat-error>
+            <mat-error *ngIf="passwordControl.hasError('minlength')">Debe tener al menos 8 caracteres</mat-error>
           </mat-form-field>
         </div>
 
@@ -122,6 +126,7 @@
                 (focus)="onUniversityFocus()"
                 (blur)="onUniversityBlur()"
               >
+              <mat-error *ngIf="universityControl.hasError('universityNotSelected')">Selecciona una universidad de la lista</mat-error>
             </mat-form-field>
 
             <div class="university-panel" *ngIf="searchingUniversity || universitySuggestions.length > 0">
@@ -140,7 +145,7 @@
                   <span class="material-symbols-outlined">school</span>
                   <span class="university-name">{{ splitMatch(u.name).before }}<strong class="match">{{ splitMatch(u.name).match }}</strong>{{ splitMatch(u.name).after }}</span>
                 </button>
-                <div class="university-hint">Sugerencias desde catálogo internacional</div>
+                <div class="university-hint">Universidades licenciadas en Perú</div>
               </ng-container>
             </div>
           </div>

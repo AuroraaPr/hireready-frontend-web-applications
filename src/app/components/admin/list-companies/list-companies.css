@@ -242,6 +242,6 @@
 
 .avatar-square {
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--hr-text-muted), var(--hr-text));
+  background: linear-gradient(135deg, var(--hr-primary), var(--hr-primary-light));
 }
 .person-email { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

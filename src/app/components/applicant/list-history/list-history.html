@@ -1,33 +1,45 @@
 <div class="app-shell">
   <app-sidebar></app-sidebar>
-
   <div class="main-col">
     <app-topbar [breadcrumb]="'Inicio · Historial'"></app-topbar>
 
-    <main class="history-page">
-      <section class="history-head">
-        <div>
-          <h1>Historial de simulaciones</h1>
-          <p>Todas tus simulaciones, ordenadas cronológicamente.</p>
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Historial de simulaciones</h1>
+        <p class="subtitle" *ngIf="!loading">
+          {{ history.length }} simulaciones · ordenadas cronológicamente
+        </p>
+      </div>
+
+      <div class="toolbar">
+        <select class="filter-select" [(ngModel)]="selectedStatus" (ngModelChange)="applyFilters()">
+          <option value="ALL">Todos los estados</option>
+          <option value="COMPLETED">Completadas</option>
+          <option value="IN_PROGRESS">En curso</option>
+          <option value="ABANDONED">Abandonadas</option>
+        </select>
+
+        <select class="filter-select" [(ngModel)]="selectedCompany" (ngModelChange)="applyFilters()">
+          <option value="ALL">Todas las empresas</option>
+          <option *ngFor="let company of companies" [value]="company">{{ company }}</option>
+        </select>
+      </div>
+
+      <div class="card">
+
+        <div class="loading-state" *ngIf="loading">
+          <span class="material-symbols-outlined spin">progress_activity</span>
+          Cargando historial...
         </div>
 
-        <div class="filters">
-          <select name="status" [(ngModel)]="selectedStatus" (change)="applyFilters()">
-            <option value="ALL">Todos los estados</option>
-            <option value="COMPLETED">Completadas</option>
-            <option value="IN_PROGRESS">En curso</option>
-            <option value="ABANDONED">Abandonadas</option>
-          </select>
-
-          <select name="company" [(ngModel)]="selectedCompany" (change)="applyFilters()">
-            <option value="ALL">Todas las empresas</option>
-            <option *ngFor="let company of companies" [value]="company">{{ company }}</option>
-          </select>
+        <div class="error-state" *ngIf="!loading && error">
+          <span class="material-symbols-outlined">error</span>
+          No se pudo cargar el historial de simulaciones.
+          <button class="btn-retry" (click)="loadHistory()">Reintentar</button>
         </div>
-      </section>
 
-      <section class="table-card">
-        <table>
+        <table class="data-table" *ngIf="!loading && !error && filtered.length > 0">
           <thead>
             <tr>
               <th>Banco / Empresa</th>
@@ -35,49 +47,71 @@
               <th>Fin</th>
               <th>Duración</th>
               <th>Estado</th>
-              <th>Score</th>
+              <th></th>
             </tr>
           </thead>
-
           <tbody>
-            <tr *ngFor="let item of pagedHistory" [class.clickable]="item.canViewReport" (click)="openReport(item)">
+            <tr *ngFor="let item of paginated" [class.clickable]="item.canViewReport" (click)="openReport(item)">
               <td>
-                <strong>{{ item.bankName }}</strong>
-                <span>{{ item.companyName }}</span>
+                <div class="bank-cell">
+                  <div class="bank-company">{{ item.companyName }}</div>
+                  <div class="bank-name">{{ item.bankName }}</div>
+                </div>
               </td>
               <td>{{ formatDate(item.startedAt) }}</td>
               <td>{{ formatDate(item.completedAt) }}</td>
               <td>{{ durationText(item) }}</td>
               <td>
-                <span class="status" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
+                <span class="status-pill" [ngClass]="statusClass(item.status)">
+                  <span class="dot"></span>{{ statusLabel(item.status) }}
+                </span>
               </td>
-              <td class="score-cell">{{ scoreText(item) }}</td>
-            </tr>
-
-            <tr *ngIf="!loading && filteredHistory.length === 0" class="empty-row">
-              <td colspan="6"></td>
-            </tr>
-
-            <tr *ngIf="loading" class="empty-row">
-              <td colspan="6">Cargando historial...</td>
+              <td class="actions-cell">
+                <button
+                  *ngIf="item.canViewReport"
+                  class="icon-btn"
+                  matTooltip="Ver reporte"
+                  (click)="openReport(item); $event.stopPropagation()"
+                >
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
-      </section>
 
-      <section class="history-footer">
-        <p>{{ showingText }}</p>
-
-        <div class="pager">
-          <button type="button" [disabled]="currentPage === 1" (click)="previousPage()">
-            <span class="material-symbols-outlined">chevron_left</span>
-          </button>
-          <strong>{{ currentPage }}</strong>
-          <button type="button" [disabled]="currentPage === totalPages" (click)="nextPage()">
-            <span class="material-symbols-outlined">chevron_right</span>
-          </button>
+        <div class="empty-box" *ngIf="noHaySimulaciones">
+          <span class="material-symbols-outlined">history</span>
+          <p>Todavía no tienes simulaciones. Cuando completes una, aparecerá aquí.</p>
         </div>
-      </section>
-    </main>
+
+        <div class="empty-box" *ngIf="sinResultadosPorFiltro">
+          <span class="material-symbols-outlined">search_off</span>
+          <p>No se encontraron simulaciones con los filtros aplicados.</p>
+        </div>
+
+        <div class="pagination" *ngIf="!loading && !error && filtered.length > 0">
+          <span class="pagination-info">Mostrando {{ rangoInicio }}-{{ rangoFin }} de {{ filtered.length }} simulaciones</span>
+          <div class="pagination-controls">
+            <button class="page-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <ng-container *ngFor="let p of pageNumbers">
+              <button
+                *ngIf="p !== '...'"
+                class="page-number"
+                [class.page-number-active]="p === page"
+                (click)="goToPage($any(p))"
+              >{{ p }}</button>
+              <span *ngIf="p === '...'" class="page-dots">…</span>
+            </ng-container>
+            <button class="page-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>

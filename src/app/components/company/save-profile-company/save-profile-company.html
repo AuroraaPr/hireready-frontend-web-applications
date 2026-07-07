@@ -2,7 +2,7 @@
   <app-sidebar></app-sidebar>
 
   <div class="main-col">
-    <app-topbar [breadcrumb]="'Configuración · Perfil de empresa'"></app-topbar>
+    <app-topbar [breadcrumb]="'Perfil de empresa'"></app-topbar>
 
     <main class="profile-page">
       <section class="page-header">
@@ -13,7 +13,7 @@
       <section class="profile-grid" *ngIf="!loading; else loadingTemplate">
         <article class="summary-card">
           <div class="big-avatar company-avatar">{{ initials }}</div>
-          <h2>{{ company.name }}</h2>
+          <h2>{{ displayName }}</h2>
           <p>{{ company.email }}</p>
 
           <span class="verified-pill">● Cuenta verificada</span>
@@ -58,7 +58,7 @@
             </div>
 
             <div class="form-actions company-actions">
-              <button type="button" class="btn-link" (click)="cancel()">Cancelar</button>
+              <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
               <button type="button" class="btn-save" [disabled]="saving" (click)="save()">
                 {{ saving ? 'Guardando...' : 'Guardar cambios' }}
               </button>

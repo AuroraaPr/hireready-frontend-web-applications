@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TokenResponseDTO } from '../models/tokenResponseDTO';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { LoginRequestDTO } from '../models/loginRequestDTO';
 import { UserStatusResponseDTO } from '../models/userStatusResponseDTO';
 import { AuthorityRole } from '../models/authorityRole';
@@ -12,6 +12,9 @@ import { AuthorityRole } from '../models/authorityRole';
 export class UserService {
   ruta_servidor: string = 'http://localhost:8080/hireready';
   recurso: string = 'users';
+
+  private nameSubject = new BehaviorSubject<string>(localStorage.getItem('name') || '');
+  name$: Observable<string> = this.nameSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -25,6 +28,7 @@ export class UserService {
         localStorage.setItem('userId', String(data.userId));
         localStorage.setItem('email', data.email);
         localStorage.setItem('name', data.name);
+        this.nameSubject.next(data.name);
         localStorage.setItem('role', data.role);
         if (data.applicantId !== null) localStorage.setItem('applicantId', String(data.applicantId));
         if (data.companyId !== null) localStorage.setItem('companyId', String(data.companyId));
@@ -50,6 +54,11 @@ export class UserService {
 
    getNameLogeado() {
   return localStorage.getItem('name');
+  }
+
+  setNameLogeado(name: string) {
+    localStorage.setItem('name', name);
+    this.nameSubject.next(name);
   }
 
   getRoleLogeado() {

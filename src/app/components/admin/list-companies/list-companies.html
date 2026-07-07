@@ -1,7 +1,7 @@
 <div class="app-shell">
   <app-sidebar></app-sidebar>
   <div class="main-col">
-    <app-topbar [breadcrumb]="'Inicio · Empresas'"></app-topbar>
+    <app-topbar [breadcrumb]="'Empresas'"></app-topbar>
 
     <div class="content">
 
@@ -58,7 +58,7 @@
             <tr *ngFor="let c of paginated">
               <td>
                 <div class="person-cell">
-                  <div class="avatar-sm avatar-square">{{ initials(c.name) }}</div>
+                  <div class="avatar-sm">{{ initials(c.name) }}</div>
                   <div>
                     <div class="person-name">{{ c.name }}</div>
                     <div class="person-email">{{ c.description }}</div>

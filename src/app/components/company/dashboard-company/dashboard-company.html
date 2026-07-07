@@ -20,7 +20,7 @@
 
       <!-- sin datos -->
       <div class="empty-state" *ngIf="!loading && data && !data.hasEnoughData">
-        <span class="material-symbols-outlined">bar_chart</span>
+        <img class="empty-robot" src="/empty-dashboard.svg" alt="Asistente HireReady analizando" />
         <h3>Aún no hay datos suficientes</h3>
         <p>{{ data.message }}</p>
         <button class="btn-primary" (click)="CrearNuevoBanco()">

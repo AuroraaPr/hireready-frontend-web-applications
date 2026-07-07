@@ -50,28 +50,29 @@
 
       <form [formGroup]="form" class="form-stack" (ngSubmit)="register()">
 
-        <mat-form-field appearance="outline" class="field full" subscriptSizing="dynamic">
-          <mat-label>Correo corporativo</mat-label>
-          <span matPrefix class="material-symbols-outlined field-prefix">mail</span>
-          <input
-            matInput
-            type="email"
-            formControlName="email"
-            placeholder="talento@empresa.com"
-            autocomplete="off"
-            (input)="clearFeedback()"
-          >
-          <mat-hint>Usaremos este correo para verificar la cuenta y como medio de contacto.</mat-hint>
-        </mat-form-field>
-
         <div class="field-row">
           <mat-form-field appearance="outline" class="field half">
+            <mat-label>Correo corporativo</mat-label>
+            <span matPrefix class="material-symbols-outlined field-prefix">mail</span>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="talento@empresa.com"
+              autocomplete="off"
+              (input)="clearFeedback()"
+            >
+            <mat-error *ngIf="emailControl.hasError('required')">El correo es obligatorio</mat-error>
+            <mat-error *ngIf="emailControl.hasError('email')">Ingresa un correo válido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="field half">
             <mat-label>Contraseña</mat-label>
+            <span matPrefix class="material-symbols-outlined field-prefix">lock</span>
             <input
               matInput
               [type]="hidePassword ? 'password' : 'text'"
               formControlName="password"
-              placeholder="Mínimo 8 caracteres"
               autocomplete="new-password"
               (input)="clearFeedback()"
             >
@@ -84,28 +85,8 @@
             >
               <span class="material-symbols-outlined">{{ hidePassword ? 'visibility' : 'visibility_off' }}</span>
             </button>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="field half">
-            <mat-label>Confirmar contraseña</mat-label>
-            <input
-              matInput
-              [type]="hideConfirmPassword ? 'password' : 'text'"
-              formControlName="confirmPassword"
-              placeholder="Repite la contraseña"
-              autocomplete="new-password"
-              (input)="clearFeedback()"
-            >
-            <button
-              mat-icon-button
-              matSuffix
-              type="button"
-              (click)="hideConfirmPassword = !hideConfirmPassword"
-              [attr.aria-label]="hideConfirmPassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-            >
-              <span class="material-symbols-outlined">{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</span>
-            </button>
-            <mat-hint *ngIf="passwordsMismatch" class="hint-error">Las contraseñas no coinciden</mat-hint>
+            <mat-error *ngIf="passwordControl.hasError('required')">La contraseña es obligatoria</mat-error>
+            <mat-error *ngIf="passwordControl.hasError('minlength')">Debe tener al menos 8 caracteres</mat-error>
           </mat-form-field>
         </div>
 

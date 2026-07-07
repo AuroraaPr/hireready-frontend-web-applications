@@ -61,15 +61,19 @@ export class RegisterApplicant implements OnInit, OnDestroy {
  
   universitySuggestions: UniversityApiResult[] = [];
   searchingUniversity: boolean = false;
+
+  private selectedUniversityName: string = '';
  
   readonly levelsOfStudy: LevelStudyOption[] = [
     { value: 'Secundaria completa', label: 'Secundaria completa' },
     { value: 'Certificación técnica', label: 'Certificación técnica' },
     { value: 'Curso especializado', label: 'Curso especializado' },
-    { value: 'Pregrado (ciclos 1 al 6)', label: 'Pregrado (ciclos 1 al 6)' },
+    { value: 'Bootcamp', label: 'Bootcamp' },
+    { value: 'Pregrado (ciclos 1 al 3)', label: 'Pregrado (ciclos 1 al 3)' },
+    { value: 'Pregrado (ciclos 4 al 6)', label: 'Pregrado (ciclos 4 al 6)' },
     { value: 'Pregrado (ciclos 7 al 10)', label: 'Pregrado (ciclos 7 al 10)' },
-    { value: 'Bachiller / egresado', label: 'Bachiller / egresado' },
-    { value: 'Titulado', label: 'Titulado' },
+    { value: 'Egresado', label: 'Egresado' },
+    { value: 'Diplomado', label: 'Diplomado' },
     { value: 'Maestría', label: 'Maestría' },
     { value: 'Doctorado', label: 'Doctorado' },
   ];
@@ -105,7 +109,7 @@ export class RegisterApplicant implements OnInit, OnDestroy {
       bornDate: ['', [Validators.required, bornDateValidator()]],
       careerId: [null, Validators.required],
       levelStudy: ['', Validators.required],
-      university: [''],
+      university: ['', this.universityFromApiValidator()],
     });
   }
  
@@ -179,6 +183,10 @@ export class RegisterApplicant implements OnInit, OnDestroy {
  
   onUniversityInput(value: string): void {
     this.clearFeedback();
+    if (value.trim() !== this.selectedUniversityName) {
+      this.selectedUniversityName = '';
+    }
+    this.universityControl.updateValueAndValidity();
     this.universitySearch$.next(value);
   }
  
@@ -196,8 +204,18 @@ export class RegisterApplicant implements OnInit, OnDestroy {
   }
  
   selectUniversity(university: UniversityApiResult): void {
+    this.selectedUniversityName = university.name;
     this.universityControl.setValue(university.name);
+    this.universityControl.updateValueAndValidity();
     this.universitySuggestions = [];
+  }
+
+  private universityFromApiValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = ((control.value as string) || '').trim();
+      if (!value) return null; 
+      return value === this.selectedUniversityName ? null : { universityNotSelected: true };
+    };
   }
  
   splitMatch(name: string): { before: string; match: string; after: string } {
@@ -235,7 +253,11 @@ export class RegisterApplicant implements OnInit, OnDestroy {
  
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.errorMessage = 'Completa todos los campos obligatorios';
+      if (this.universityControl.hasError('universityNotSelected')) {
+        this.errorMessage = 'Selecciona tu universidad de la lista de sugerencias, o deja el campo vacío.';
+      } else {
+        this.errorMessage = 'Completa todos los campos obligatorios';
+      }
       return;
     }
  

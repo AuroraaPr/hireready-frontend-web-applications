@@ -27,6 +27,7 @@ export class ListBanksAdmin {
   searchText: string = '';
   selectedCompany: string = '';
   selectedLevel: string = '';
+  selectedCompanyStatus: string = '';
 
   constructor(private questionBankService: QuestionBankService,
               private dialog: MatDialog,
@@ -76,7 +77,12 @@ export class ListBanksAdmin {
       const coincideNivel = this.selectedLevel === '' ||
         b.level === this.selectedLevel;
 
-      return coincideTexto && coincideEmpresa && coincideNivel;
+      // filtro por estado de empresa
+      const coincideEstadoEmpresa = this.selectedCompanyStatus === '' ||
+        (this.selectedCompanyStatus === 'active' && b.companyEnabled) ||
+        (this.selectedCompanyStatus === 'inactive' && !b.companyEnabled);
+
+      return coincideTexto && coincideEmpresa && coincideNivel && coincideEstadoEmpresa;
     });
   }
   
@@ -94,4 +100,3 @@ export class ListBanksAdmin {
     });
   }
 }
-

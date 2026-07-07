@@ -1,19 +1,10 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CompanyService } from '../../../services/company-service';
 import { UserService } from '../../../services/user-service';
 import { RegisterCompanyRequestDTO } from '../../../models/registerCompanyRequestDTO';
 import { LoginRequestDTO } from '../../../models/loginRequestDTO';
- 
-function passwordsMatchValidator(): ValidatorFn {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const password = group.get('password')?.value;
-    const confirmPassword = group.get('confirmPassword')?.value;
-    if (!password || !confirmPassword) return null;
-    return password === confirmPassword ? null : { passwordMismatch: true };
-  };
-}
 
 @Component({
   selector: 'app-register-company',
@@ -25,7 +16,6 @@ export class RegisterCompany {
   form: FormGroup;
  
   hidePassword: boolean = true;
-  hideConfirmPassword: boolean = true;
   saving: boolean = false;
  
   errorMessage: string = '';
@@ -39,16 +29,12 @@ export class RegisterCompany {
     private companyService: CompanyService,
     private userService: UserService,
   ) {
-    this.form = this.fb.group(
-      {
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ['', Validators.required],
-        name: ['', Validators.required],
-        description: ['', [Validators.required, Validators.maxLength(this.descriptionMaxLength)]],
-      },
-      { validators: passwordsMatchValidator() },
-    );
+    this.form = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      name: ['', Validators.required],
+      description: ['', [Validators.required, Validators.maxLength(this.descriptionMaxLength)]],
+    });
   }
   
   get emailControl(): AbstractControl {
@@ -57,22 +43,11 @@ export class RegisterCompany {
   get passwordControl(): AbstractControl {
     return this.form.get('password')!;
   }
-  get confirmPasswordControl(): AbstractControl {
-    return this.form.get('confirmPassword')!;
-  }
   get nameControl(): AbstractControl {
     return this.form.get('name')!;
   }
   get descriptionControl(): AbstractControl {
     return this.form.get('description')!;
-  }
- 
-  get passwordsMismatch(): boolean {
-    return (
-      this.form.hasError('passwordMismatch') &&
-      this.confirmPasswordControl.touched &&
-      !!this.confirmPasswordControl.value
-    );
   }
   
   goToApplicantRegister(): void {
@@ -129,8 +104,6 @@ export class RegisterCompany {
         }, 1800);
       },
       error: () => {
-        // la cuenta ya se creó correctamente; si el auto-login falla,
-        // igual avisamos y mandamos a la empresa a iniciar sesión manualmente
         this.saving = false;
         this.successMessage = '¡Cuenta registrada correctamente!';
         setTimeout(() => {
