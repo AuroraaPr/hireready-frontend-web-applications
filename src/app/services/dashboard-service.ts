@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { ApplicantDashboardResponseDTO } from '../models/applicantDashboardResponseDTO';
 import { CompanyDashboardResponseDTO } from '../models/companyDashboardResponseDTO';
 import { DashboardResponseDTO } from '../models/dashboardResponseDTO';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;;
   recurso: string = 'dashboard';
 
   constructor(private http: HttpClient) {}

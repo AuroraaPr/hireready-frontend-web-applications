@@ -4,12 +4,13 @@ import { CreateQuestionBankRequestDTO } from '../models/createQuestionBankReques
 import { QuestionBankResponseDTO } from '../models/questionBankResponseDTO';
 import { QuestionBankSummaryResponseDTO } from '../models/questionBankSummaryResponseDTO';
 import { QuestionBankAdminSummaryResponseDTO } from '../models/questionBankAdminSummaryResponseDTO';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuestionBankService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;;
   recurso: string = 'question-banks';
 
   constructor(private http: HttpClient) {}

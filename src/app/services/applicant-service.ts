@@ -4,12 +4,13 @@ import { RegisterApplicantRequestDTO } from '../models/registerApplicantRequestD
 import { ApplicantResponseDTO } from '../models/applicantResponseDTO';
 import { ApplicantUpdateDTO } from '../models/applicantUpdateDTO';
 import { ApplicantSummaryResponseDTO } from '../models/applicantSummaryResponseDTO';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApplicantService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;
   recurso: string = 'applicants';
 
   constructor(private http: HttpClient) {}

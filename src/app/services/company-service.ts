@@ -4,12 +4,13 @@ import { RegisterCompanyRequestDTO } from '../models/registerCompanyRequestDTO';
 import { CompanyResponseDTO } from '../models/companyResponseDTO';
 import { CompanyUpdateDTO } from '../models/companyUpdateDTO';
 import { CompanySummaryResponseDTO } from '../models/companySummaryResponseDTO';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CompanyService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;
   recurso: string = 'companies';
 
   constructor(private http: HttpClient) {}

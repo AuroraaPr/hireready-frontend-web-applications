@@ -5,12 +5,13 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { LoginRequestDTO } from '../models/loginRequestDTO';
 import { UserStatusResponseDTO } from '../models/userStatusResponseDTO';
 import { AuthorityRole } from '../models/authorityRole';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;
   recurso: string = 'users';
 
   private nameSubject = new BehaviorSubject<string>(localStorage.getItem('name') || '');

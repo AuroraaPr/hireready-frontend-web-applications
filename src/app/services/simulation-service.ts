@@ -8,12 +8,13 @@ import { ExitSimulationResponseDTO } from '../models/exitSimulationResponseDTO';
 import { FinalizeSimulationResponseDTO } from '../models/finalizeSimulationResponseDTO';
 import { SimulationReportFullResponseDTO } from '../models/simulationReportFullResponseDTO';
 import { SimulationHistoryItemResponseDTO } from '../models/simulationHistoryItemResponseDTO';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SimulationService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;;
   recurso: string = 'simulations';
 
   constructor(private http: HttpClient) {}

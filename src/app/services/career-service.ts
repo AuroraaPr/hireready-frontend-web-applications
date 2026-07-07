@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CareerResponseDTO } from '../models/careerResponseDTO';
 import { CareerRequestDTO } from '../models/careerRequestDTO';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CareerService {
-  ruta_servidor: string = 'http://localhost:8080/hireready';
+  ruta_servidor: string = environment.apiUrl;;
   recurso: string = 'careers';
 
   constructor(private http: HttpClient) {}
