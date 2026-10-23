@@ -1,59 +1,45 @@
-# HirereadyFrontendWebApplications
+# HireReady — Aplicación web (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.14.
+Frontend de HireReady, una plataforma para que estudiantes universitarios practiquen entrevistas laborales por voz y reciban retroalimentación generada con IA. La API está en [hireready-web-services](https://github.com/AuroraaPr/hireready-web-services).
 
-## Development server
+Proyecto académico del curso Arquitectura de Aplicaciones Web — Universidad Peruana de Ciencias Aplicadas (UPC), 2026-1.
 
-To start a local development server, run:
+## Funcionalidades por rol
 
-```bash
-ng serve
+- **Postulante:** registro y perfil, bancos de preguntas de su carrera, simulación de entrevista con un avatar que lee las preguntas en voz alta, grabación de respuestas, reporte de retroalimentación, historial y dashboard de desempeño.
+- **Empresa:** registro y perfil, creación y consulta de bancos de preguntas, dashboard.
+- **Administrador:** dashboard general y gestión de postulantes, empresas, carreras y bancos de preguntas.
+
+## Tecnologías
+
+Angular 21 (NgModules) · TypeScript · Angular Material · ngx-charts · Web Speech API · Firebase Hosting
+
+## Estructura
+
+```
+src/app
+├── components     # vistas por rol: admin, applicant, company, auth y shared
+├── guards         # acceso por rol (admin, empresa, postulante)
+├── interceptors   # agrega el token JWT a cada petición
+├── models         # interfaces de datos
+├── services       # comunicación con la API
+└── modules        # módulo de Angular Material
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Cómo ejecutarlo
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Requisitos: Node.js y npm (versión compatible con Angular 21) y la API corriendo en local.
 
 ```bash
-ng generate component component-name
+npm install
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+La aplicación abre en `http://localhost:4200` y usa la API definida en `src/environments/environment.development.ts` (`http://localhost:8080/hireready`).
+
+Para generar la versión de producción:
 
 ```bash
-ng generate --help
+npm run build
+firebase deploy
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
